@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"strings"
 
-	collection "github.com/gtyrin/go-collection"
+	collection "github.com/ytsiuryn/go-collection"
 )
 
 // Media ..

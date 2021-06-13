@@ -6,10 +6,10 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	collection "github.com/gtyrin/go-collection"
-	intutils "github.com/gtyrin/go-intutils"
-	stringutils "github.com/gtyrin/go-stringutils"
-	world "github.com/gtyrin/go-world"
+	collection "github.com/ytsiuryn/go-collection"
+	intutils "github.com/ytsiuryn/go-intutils"
+	stringutils "github.com/ytsiuryn/go-stringutils"
+	world "github.com/ytsiuryn/go-world"
 )
 
 // FileInfo describes the common file track properties.

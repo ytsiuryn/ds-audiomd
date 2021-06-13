@@ -3,7 +3,7 @@ package metadata
 import (
 	"testing"
 
-	collection "github.com/gtyrin/go-collection"
+	collection "github.com/ytsiuryn/go-collection"
 )
 
 func TestSuggestionBestNResults(t *testing.T) {

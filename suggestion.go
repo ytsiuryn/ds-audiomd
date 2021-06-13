@@ -3,7 +3,7 @@ package metadata
 import (
 	"sort"
 
-	intutils "github.com/gtyrin/go-intutils"
+	intutils "github.com/ytsiuryn/go-intutils"
 )
 
 // Suggestion has a search result of an online service.

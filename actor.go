@@ -4,8 +4,8 @@ import (
 	"errors"
 	"reflect"
 
-	collection "github.com/gtyrin/go-collection"
-	stringutils "github.com/gtyrin/go-stringutils"
+	collection "github.com/ytsiuryn/go-collection"
+	stringutils "github.com/ytsiuryn/go-stringutils"
 )
 
 // ActorInRoles describes album/track actor with all his roles.
