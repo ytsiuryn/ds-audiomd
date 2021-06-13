@@ -1,4 +1,4 @@
-module github.com/gtyrin/ds-audiomd
+module github.com/ytsiuryn/ds-audiomd
 
 go 1.16
 
