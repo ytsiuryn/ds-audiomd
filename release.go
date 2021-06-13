@@ -4,8 +4,8 @@ import (
 	"reflect"
 	"sync"
 
-	collection "github.com/gtyrin/go-collection"
-	stringutils "github.com/gtyrin/go-stringutils"
+	collection "github.com/ytsiuryn/go-collection"
+	stringutils "github.com/ytsiuryn/go-stringutils"
 )
 
 // Release описывает коммерческую суть альбома из репозитория.

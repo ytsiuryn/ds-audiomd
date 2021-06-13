@@ -3,7 +3,7 @@ package metadata
 import (
 	"reflect"
 
-	collection "github.com/gtyrin/go-collection"
+	collection "github.com/ytsiuryn/go-collection"
 )
 
 // RecordSession описывает общие свойства сессии записи.

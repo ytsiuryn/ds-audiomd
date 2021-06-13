@@ -3,7 +3,7 @@ package metadata
 import (
 	"reflect"
 
-	collection "github.com/gtyrin/go-collection"
+	collection "github.com/ytsiuryn/go-collection"
 )
 
 // Work это часть произведения (композиция) или произведение целиком.

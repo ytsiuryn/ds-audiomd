@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	collection "github.com/gtyrin/go-collection"
+	collection "github.com/ytsiuryn/go-collection"
 )
 
 func TestCompareCollections(t *testing.T) {
