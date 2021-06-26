@@ -10,6 +10,7 @@ import (
 type Suggestion struct {
 	Entity           interface{} `json:"entity"`
 	ServiceName      string      `json:"service"`
+	OnlineSuggeston  bool        `json:"online_suggestion"`
 	SourceSimilarity float64     `json:"score"`
 	// Confirmed   bool        `json:"confirmed,omitempty"`
 }
