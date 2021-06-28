@@ -19,6 +19,18 @@ func IsPerformer(name ActorName, roles []string) bool {
 	return collection.ContainsStr("performer", roles)
 }
 
+// Add добавиляет сведеления об акторе и его коде во некоторой внешней БД, если необходимо.
+func (ai ActorIDs) Add(name, key, val string) {
+	ids, ok := ai[ActorName(name)]
+	if !ok {
+		ai[ActorName(name)] = IDs{key: val}
+	} else {
+		if _, ok := ids[key]; !ok {
+			ai[ActorName(name)][key] = val
+		}
+	}
+}
+
 // IsEmpty проверяет коллекцию на пустоту.
 func (ai ActorIDs) IsEmpty() bool {
 	return len(ai) == 0
@@ -47,6 +59,15 @@ func (ar ActorRoles) Compare(other ActorRoles) float64 {
 		}
 	}
 	return max
+}
+
+// Добавить актора и роль, если необходимо.
+func (ar ActorRoles) Add(name, role string) {
+	roles := ar[ActorName(name)]
+	if !collection.ContainsStr(role, roles) {
+		roles = append(roles, role)
+	}
+	ar[ActorName(name)] = roles
 }
 
 func (ar ActorRoles) Filter(predicat func(name ActorName, roles []string) bool) ActorRoles {
