@@ -80,6 +80,14 @@ func (ar ActorRoles) Filter(predicat func(name ActorName, roles []string) bool) 
 	return ret
 }
 
+// First возвращает первый попавшийся ключ-имя или пустую строку.
+func (ac ActorRoles) First() ActorName {
+	for actorName := range ac {
+		return actorName
+	}
+	return ""
+}
+
 // IsEmpty проверяет коллекцию как не инициализированную.
 func (ar ActorRoles) IsEmpty() bool {
 	return len(ar) == 0
