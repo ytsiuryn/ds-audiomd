@@ -30,7 +30,8 @@ type ReleaseStub struct {
 	ReleaseRepeat `json:"release_repeat,omitempty"`
 	ReleaseRemake `json:"release_remake,omitempty"`
 	ReleaseOrigin `json:"release_origin,omitempty"`
-	Actors        *Actors `json:"actors,omitempty"`
+	Actors        ActorIDs   `json:"actors,omitempty"`
+	ActorRoles    ActorRoles `json:"actors_roles,omitempty"`
 	// идентификаторы online БД ("discogs", "musicbrainz", "rutracker")
 	IDs         collection.StrMap `json:"ids,omitempty"`
 	Pictures    []*PictureInAudio `json:"pictures,omitempty"`
@@ -49,7 +50,8 @@ func NewRelease() *Release {
 // NewReleaseStub construct a new release object.
 func NewReleaseStub() *ReleaseStub {
 	return &ReleaseStub{
-		Actors:      NewActorCollection(),
+		Actors:      ActorIDs{},
+		ActorRoles:  ActorRoles{},
 		IDs:         map[string]string{},
 		Unprocessed: map[string]string{},
 	}
@@ -104,8 +106,8 @@ func (r *Release) Compare(other *Release) float64 {
 }
 
 func (r *Release) performersCompare(other *Release) (float64, float64) {
-	performers := r.Actors.Filter(IsPerformer)
-	otherPerformers := other.Actors.Filter(IsPerformer)
+	performers := r.ActorRoles.Filter(IsPerformer)
+	otherPerformers := other.ActorRoles.Filter(IsPerformer)
 	res := performers.Compare(otherPerformers)
 	if res == 0 {
 		return 0., 0.
@@ -166,7 +168,7 @@ type void struct{}
 func (r *Release) Optimize() {
 	r.wg.Add(3)
 	go r.aggregateNotes()
-	go r.aggregateReleaseActorRoles()
+	go r.aggregateActors()
 	go r.aggregateUnprocessed()
 	r.wg.Wait()
 	r.Clean()
@@ -177,6 +179,10 @@ func (r *Release) Clean() {
 	r.Original.Actors.Clean()
 	if r.Original.Actors.IsEmpty() {
 		r.Original.Actors = nil
+	}
+	r.Original.ActorRoles.Clean()
+	if r.Original.ActorRoles.IsEmpty() {
+		r.Original.ActorRoles = nil
 	}
 	for _, d := range r.Discs {
 		d.Clean()
@@ -195,6 +201,10 @@ func (r *Release) Clean() {
 	r.Actors.Clean()
 	if r.Actors.IsEmpty() {
 		r.Actors = nil
+	}
+	r.ActorRoles.Clean()
+	if r.ActorRoles.IsEmpty() {
+		r.ActorRoles = nil
 	}
 	r.IDs.Clean()
 	if r.IDs.IsEmpty() {
@@ -261,44 +271,20 @@ func (r *Release) aggregateUnprocessed() {
 	}
 }
 
-func (r *Release) aggregateReleaseActorRoles() {
-	r.aggregateActors(
-		func(t *Track) *Actors {
-			return t.Actors
-		},
-		r.Actors)
-}
-
-func (r *Release) aggregateActors(fnc func(*Track) *Actors, acc *Actors) {
-	defer r.wg.Done()
-	tCount := len(r.Tracks)
-	counters := map[string]map[string]int{} // name -> role -> track_count
+func (r *Release) aggregateActors() {
 	for _, t := range r.Tracks {
-		for _, air := range *fnc(t) {
-			if _, ok := counters[air.Name]; !ok {
-				counters[air.Name] = map[string]int{}
+		for name, ids := range t.Actors {
+			if _, ok := r.Actors[name]; !ok {
+				r.Actors[name] = ids
 			}
-			for _, role := range air.Roles {
-				if _, ok := counters[air.Name][role]; !ok {
-					counters[air.Name][role] = 0
+			for k, v := range ids {
+				if _, ok := r.Actors[name][k]; !ok {
+					r.Actors[name][k] = v
 				}
-				counters[air.Name][role]++
+				delete(ids, k)
 			}
-		}
-	}
-	for _, t := range r.Tracks {
-		actors := fnc(t)
-		for actorInd := len(*actors) - 1; actorInd >= 0; actorInd-- {
-			air := (*actors)[actorInd]
-			for roleInd := len(air.Roles) - 1; roleInd >= 0; roleInd-- {
-				role := air.Roles[roleInd]
-				if counters[air.Name][role] == tCount {
-					acc.Merge(air)
-					actors.DeleteRole(air.Name, role)
-					if len(actors.Roles(air.Name)) == 0 {
-						actors.DeleteActor(air.Name)
-					}
-				}
+			if len(ids) == 0 {
+				delete(t.Actors, name)
 			}
 		}
 	}

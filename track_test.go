@@ -88,8 +88,8 @@ func TestTrackSetPosition(t *testing.T) {
 func TestTrackClean(t *testing.T) {
 	tr := NewTrack()
 	tr.Clean()
-	if tr.Composition != nil || tr.Record != nil || tr.Actors != nil || tr.IDs != nil ||
-		tr.Unprocessed != nil || tr.AudioInfo != nil || tr.FileInfo != nil {
+	if tr.Composition != nil || tr.Record != nil || tr.Actors != nil || tr.ActorRoles != nil ||
+		tr.IDs != nil || tr.Unprocessed != nil || tr.AudioInfo != nil || tr.FileInfo != nil {
 		t.Fail()
 	}
 }

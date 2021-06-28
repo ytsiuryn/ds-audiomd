@@ -43,8 +43,8 @@ func TestReleasePerformersCompare(t *testing.T) {
 	if res, weight := r.performersCompare(r2); res != 0. || weight != 0. {
 		t.Fail()
 	}
-	r.Actors.AddRole("Miles Davis", "performer")
-	r2.Actors.AddRole("Miles Davis", "performer")
+	r.ActorRoles["Miles Davis"] = []string{"performer"}
+	r2.ActorRoles["Miles Davis"] = []string{"performer"}
 	if res, weight := r.performersCompare(r2); res != 1. || weight != 5. {
 		t.Fail()
 	}
@@ -133,16 +133,16 @@ func TestReleaseAggregateUnprocessed(t *testing.T) {
 	}
 }
 
-func TestReleaseAggregateReleaseActorRoles(t *testing.T) {
+func TestReleaseAggregateActorRoles(t *testing.T) {
 	r := NewRelease()
 	t1 := NewTrack()
-	t1.Actors.AddRole("Nemo", "engineer")
+	t1.Actors["Nemo"] = IDs{"discogs": "12345"}
 	t2 := NewTrack()
-	t2.Actors.AddRole("Nemo", "engineer")
+	t2.Actors["Nemo"] = IDs{"discogs": "12345"}
 	r.Tracks = append(r.Tracks, t1, t2)
 	r.wg.Add(1)
-	r.aggregateReleaseActorRoles()
-	if len(*r.Actors) != 1 || len(*t1.Actors) != 0 || len(*t2.Actors) != 0 {
+	r.aggregateActors()
+	if len(r.Actors) != 1 || len(t1.Actors) != 0 || len(t2.Actors) != 0 {
 		t.Fail()
 	}
 }

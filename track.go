@@ -36,7 +36,8 @@ type Track struct {
 	Title       string            `json:"title,omitempty"`
 	Notes       string            `json:"notes,omitempty"`
 	Duration    intutils.Duration `json:"duration,omitempty"` // TODO: aggregate release track Actors?
-	Actors      *Actors           `json:"actors,omitempty"`
+	Actors      ActorIDs          `json:"actors,omitempty"`
+	ActorRoles  ActorRoles        `json:"actor_roles,omitempty"`
 	IDs         collection.StrMap `json:"ids,omitempty"`
 	Unprocessed collection.StrMap `json:"unprocessed,omitempty"`
 	*FileInfo   `json:"file_info,omitempty"`
@@ -81,7 +82,8 @@ func NewTrack() *Track {
 	return &Track{
 		Record:      NewRecord(),
 		Composition: NewWork(),
-		Actors:      NewActorCollection(),
+		Actors:      ActorIDs{},
+		ActorRoles:  ActorRoles{},
 		IDs:         make(map[string]string),
 		Unprocessed: make(map[string]string),
 		FileInfo:    &FileInfo{},
@@ -194,6 +196,10 @@ func (track *Track) Clean() {
 	track.Actors.Clean()
 	if track.Actors.IsEmpty() {
 		track.Actors = nil
+	}
+	track.ActorRoles.Clean()
+	if track.ActorRoles.IsEmpty() {
+		track.ActorRoles = nil
 	}
 	track.IDs.Clean()
 	if track.IDs.IsEmpty() {

@@ -6,10 +6,10 @@ import (
 
 func TestAlbumPerformers(t *testing.T) {
 	r := NewRecord()
-	r.Actors.AddRole("Miles Davis", "performer")
-	r.Actors.AddRole("Marcus Miller", "guitar")
-	r.Actors.AddRole("Milt Jackson", "performer")
-	if len(*r.Performers()) != 2 {
+	r.ActorRoles["Miles Davis"] = []string{"performer"}
+	r.ActorRoles["Marcus Miller"] = []string{"guitar"}
+	r.ActorRoles["Milt Jackson"] = []string{"performer"}
+	if len(r.Performers()) != 2 {
 		t.Fail()
 	}
 }
