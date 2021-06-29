@@ -272,6 +272,7 @@ func (r *Release) aggregateUnprocessed() {
 }
 
 func (r *Release) aggregateActors() {
+	defer r.wg.Done()
 	for _, t := range r.Tracks {
 		for name, ids := range t.Actors {
 			if _, ok := r.Actors[name]; !ok {

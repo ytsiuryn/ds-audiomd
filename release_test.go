@@ -133,7 +133,7 @@ func TestReleaseAggregateUnprocessed(t *testing.T) {
 	}
 }
 
-func TestReleaseAggregateActorRoles(t *testing.T) {
+func TestReleaseAggregateActors(t *testing.T) {
 	r := NewRelease()
 	t1 := NewTrack()
 	t1.Actors["Nemo"] = IDs{"discogs": "12345"}
