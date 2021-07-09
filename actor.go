@@ -36,6 +36,14 @@ func (ai ActorIDs) IsEmpty() bool {
 	return len(ai) == 0
 }
 
+// First возвращает первое попавшееся имя актора.
+func (ai ActorIDs) First() string {
+	for actorName := range ai {
+		return string(actorName)
+	}
+	return ""
+}
+
 // Clean сбрасывает всю коллекцию в nil, если поля структуры не отличаются от нулевых значений.
 func (ai ActorIDs) Clean() {
 	for name, ids := range ai {
