@@ -181,7 +181,8 @@ func (rs ReleaseStatus) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON ..
 func (rs *ReleaseStatus) UnmarshalJSON(b []byte) error {
-	*rs = StrToReleaseStatus[string(b)]
+	k := string(b)
+	*rs = StrToReleaseStatus[k[1:len(k)-1]]
 	return nil
 }
 
@@ -210,7 +211,8 @@ func (rt ReleaseType) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON ..
 func (rt *ReleaseType) UnmarshalJSON(b []byte) error {
-	*rt = StrToReleaseType[string(b)]
+	k := string(b)
+	*rt = StrToReleaseType[k[1:len(k)-1]]
 	return nil
 }
 
@@ -232,7 +234,8 @@ func (rr ReleaseRepeat) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON ..
 func (rr *ReleaseRepeat) UnmarshalJSON(b []byte) error {
-	*rr = StrToReleaseRepeat[string(b)]
+	k := string(b)
+	*rr = StrToReleaseRepeat[k[1:len(k)-1]]
 	return nil
 }
 
@@ -254,7 +257,8 @@ func (rr ReleaseRemake) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON ..
 func (rr *ReleaseRemake) UnmarshalJSON(b []byte) error {
-	*rr = StrToReleaseRemake[string(b)]
+	k := string(b)
+	*rr = StrToReleaseRemake[k[1:len(k)-1]]
 	return nil
 }
 
@@ -276,7 +280,8 @@ func (ro ReleaseOrigin) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON ..
 func (ro *ReleaseOrigin) UnmarshalJSON(b []byte) error {
-	*ro = StrToReleaseOrigin[string(b)]
+	k := string(b)
+	*ro = StrToReleaseOrigin[k[1:len(k)-1]]
 	return nil
 }
 
