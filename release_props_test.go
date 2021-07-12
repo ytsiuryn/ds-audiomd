@@ -3,6 +3,8 @@ package metadata
 import (
 	"encoding/json"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestReleaseStatusMarshalAndUnmarshal(t *testing.T) {
@@ -14,9 +16,7 @@ func TestReleaseStatusMarshalAndUnmarshal(t *testing.T) {
 	if err := json.Unmarshal(data, &rs); err != nil {
 		t.Fatal(err)
 	}
-	if rs != ReleaseStatusOfficial {
-		t.Fail()
-	}
+	assert.Equal(t, rs, ReleaseStatusOfficial)
 }
 
 func TestReleaseStatusDecode(t *testing.T) {
@@ -31,9 +31,7 @@ func TestReleaseStatusDecode(t *testing.T) {
 func TestReleaseStatusDecodeSlice(t *testing.T) {
 	var rs ReleaseStatus
 	rs.DecodeSlice(&[]string{"Text", "Oficial", "Another Text"})
-	if rs != ReleaseStatusOfficial {
-		t.Fail()
-	}
+	assert.Equal(t, rs, ReleaseStatusOfficial)
 }
 
 func TestReleaseTypeMarshalAndUnmarshal(t *testing.T) {
@@ -45,17 +43,13 @@ func TestReleaseTypeMarshalAndUnmarshal(t *testing.T) {
 	if err := json.Unmarshal(data, &rt); err != nil {
 		t.Fatal(err)
 	}
-	if rt != ReleaseTypeAlbum {
-		t.Fail()
-	}
+	assert.Equal(t, rt, ReleaseTypeAlbum)
 }
 
 func TestReleaseTypeDecodeSlice(t *testing.T) {
 	var rt ReleaseType
 	rt.DecodeSlice(&[]string{"Text", "Album", "Another Text"})
-	if rt != ReleaseTypeAlbum {
-		t.Fail()
-	}
+	assert.Equal(t, rt, ReleaseTypeAlbum)
 }
 
 func TestReleaseRepeatMarshalAndUnmarshal(t *testing.T) {
@@ -67,17 +61,13 @@ func TestReleaseRepeatMarshalAndUnmarshal(t *testing.T) {
 	if err := json.Unmarshal(data, &rr); err != nil {
 		t.Fatal(err)
 	}
-	if rr != ReleaseRepeatRemake {
-		t.Fail()
-	}
+	assert.Equal(t, rr, ReleaseRepeatRemake)
 }
 
 func TestReleaseRepeatDecodeSlice(t *testing.T) {
 	var rr ReleaseRepeat
 	rr.DecodeSlice(&[]string{"Text", "Repress", "Another Text"})
-	if rr != ReleaseRepeatRepress {
-		t.Fail()
-	}
+	assert.Equal(t, rr, ReleaseRepeatRepress)
 }
 
 func TestReleaseRemakeMarshalAndUnmarshal(t *testing.T) {
@@ -89,17 +79,13 @@ func TestReleaseRemakeMarshalAndUnmarshal(t *testing.T) {
 	if err := json.Unmarshal(data, &rr); err != nil {
 		t.Fatal(err)
 	}
-	if rr != ReleaseRemakeRemastered {
-		t.Fail()
-	}
+	assert.Equal(t, rr, ReleaseRemakeRemastered)
 }
 
 func TestReleaseRemakeDecodeSlice(t *testing.T) {
 	var rr ReleaseRemake
 	rr.DecodeSlice(&[]string{"Text", "Remastered", "Another Text"})
-	if rr != ReleaseRemakeRemastered {
-		t.Fail()
-	}
+	assert.Equal(t, rr, ReleaseRemakeRemastered)
 }
 
 func TestReleaseOriginMarshalAndUnmarshal(t *testing.T) {
@@ -111,15 +97,11 @@ func TestReleaseOriginMarshalAndUnmarshal(t *testing.T) {
 	if err := json.Unmarshal(data, &ro); err != nil {
 		t.Fatal(err)
 	}
-	if ro != ReleaseOriginStudio {
-		t.Fail()
-	}
+	assert.Equal(t, ro, ReleaseOriginStudio)
 }
 
 func TestReleaseOriginDecodeSlice(t *testing.T) {
 	var ro ReleaseOrigin
 	ro.DecodeSlice(&[]string{"Text", "Studio", "Another Text"})
-	if ro != ReleaseOriginStudio {
-		t.Fail()
-	}
+	assert.Equal(t, ro, ReleaseOriginStudio)
 }

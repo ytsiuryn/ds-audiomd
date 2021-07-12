@@ -2,6 +2,8 @@ package metadata
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestDecodeMedia(t *testing.T) {
@@ -27,7 +29,5 @@ func TestDecodeMedia(t *testing.T) {
 func TestDiscFormatCompare(t *testing.T) {
 	df1 := &DiscFormat{Media: MediaLP}
 	df2 := &DiscFormat{Media: MediaLP}
-	if df1.Compare(df2) != 1. {
-		t.Fail()
-	}
+	assert.Equal(t, df1.Compare(df2), 1.)
 }

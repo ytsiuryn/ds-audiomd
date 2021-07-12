@@ -1,14 +1,15 @@
 package metadata
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
 
 func TestWorkIsEmptyAndClean(t *testing.T) {
 	w := NewWork()
 	w.Clean()
-	if !w.IsEmpty() {
-		t.Fail()
-	}
-	if w.Actors != nil || w.IDs != nil {
-		t.Fail()
-	}
+	assert.True(t, w.IsEmpty())
+	assert.Empty(t, w.Actors)
+	assert.Empty(t, w.IDs)
 }

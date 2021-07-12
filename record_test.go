@@ -2,6 +2,8 @@ package metadata
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestAlbumPerformers(t *testing.T) {
@@ -9,18 +11,13 @@ func TestAlbumPerformers(t *testing.T) {
 	r.ActorRoles["Miles Davis"] = []string{"performer"}
 	r.ActorRoles["Marcus Miller"] = []string{"guitar"}
 	r.ActorRoles["Milt Jackson"] = []string{"performer"}
-	if len(r.Performers()) != 2 {
-		t.Fail()
-	}
+	assert.Len(t, r.Performers(), 2)
 }
 
 func TestRecordingIsEmptyAndClean(t *testing.T) {
 	r := NewRecord()
 	r.Clean()
-	if !r.IsEmpty() {
-		t.Fail()
-	}
-	if r.Actors != nil || r.IDs != nil {
-		t.FailNow()
-	}
+	assert.True(t, r.IsEmpty())
+	assert.Empty(t, r.Actors)
+	assert.Empty(t, r.IDs)
 }

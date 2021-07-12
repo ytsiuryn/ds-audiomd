@@ -2,6 +2,8 @@ package metadata
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestDiscNumberByTrackPos(t *testing.T) {
@@ -24,65 +26,45 @@ func TestDiscNumberByTrackPos(t *testing.T) {
 }
 
 func TestTrackComplexPosition(t *testing.T) {
-	if ComplexPosition("1", "1") != "1.1" {
-		t.Fail()
-	}
+	assert.Equal(t, ComplexPosition("1", "1"), "1.1")
 }
 
 func TestTrackComplexTitle(t *testing.T) {
 	res := ComplexTitle("Sym.5 in C minor, op.67", "1. Allegro con brio")
-	if res != "Sym.5 in C minor, op.67. 1. Allegro con brio" {
-		t.Fail()
-	}
+	assert.Equal(t, res, "Sym.5 in C minor, op.67. 1. Allegro con brio")
 }
 
 func TestTrackAddComment(t *testing.T) {
 	track := NewTrack()
 	track.AddComment("1st comment")
-	if track.Notes != "1st comment" {
-		t.Fail()
-	}
+	assert.Equal(t, track.Notes, "1st comment")
 	track.AddComment("2nd comment")
-	if track.Notes != "1st comment\n2nd comment" {
-		t.Fail()
-	}
+	assert.Equal(t, track.Notes, "1st comment\n2nd comment")
 }
 
 func TestTrackAddUnprocessed(t *testing.T) {
 	track := NewTrack()
 	track.AddUnprocessed("discogs", "12345")
-	if !track.Unprocessed.Exists("discogs") {
-		t.Fail()
-	}
+	assert.True(t, track.Unprocessed.Exists("discogs"))
 }
 
 func TestTrackSetLyrics(t *testing.T) {
 	track := NewTrack()
 	track.SetLyrics("Bla-bla", false)
-	if track.Composition.Lyrics.Text != "Bla-bla" {
-		t.Fail()
-	}
+	assert.Equal(t, track.Composition.Lyrics.Text, "Bla-bla")
 }
 
 func TestTrackNormalizePosition(t *testing.T) {
-	if NormalizePosition("1") != "01" {
-		t.Fail()
-	}
-	if NormalizePosition("01") != "01" {
-		t.Fail()
-	}
+	assert.Equal(t, NormalizePosition("1"), "01")
+	assert.Equal(t, NormalizePosition("01"), "01")
 }
 
 func TestTrackSetPosition(t *testing.T) {
 	track := NewTrack()
 	track.SetPosition("")
-	if track.Position != "" {
-		t.Fail()
-	}
+	assert.Empty(t, track.Position)
 	track.SetPosition("1")
-	if track.Position != "01" {
-		t.Fail()
-	}
+	assert.Equal(t, track.Position, "01")
 }
 
 func TestTrackClean(t *testing.T) {

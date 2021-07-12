@@ -2,18 +2,16 @@ package metadata
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestReleaseCover(t *testing.T) {
 	r := NewRelease()
 	r.Pictures = append(r.Pictures, &PictureInAudio{PictType: PictTypeArtist})
-	if r.Cover() != nil {
-		t.Fail()
-	}
+	assert.Empty(t, r.Cover())
 	r.Pictures = append(r.Pictures, &PictureInAudio{PictType: PictTypeCoverFront})
-	if r.Cover() == nil {
-		t.Fail()
-	}
+	assert.NotEmpty(t, r.Cover())
 }
 
 func TestReleaseTrackByPosition(t *testing.T) {
@@ -21,20 +19,15 @@ func TestReleaseTrackByPosition(t *testing.T) {
 	track.Position = "1"
 	r := NewRelease()
 	r.Tracks = []*Track{track}
-	if r.TrackByPosition("3") != nil {
-		t.Fail()
-	}
-	if r.TrackByPosition("1") == nil {
-		t.Fail()
-	}
+	assert.Empty(t, r.TrackByPosition("3"))
+	assert.NotEmpty(t, r.TrackByPosition("1"))
 }
 
 func TestReleaseDisc(t *testing.T) {
 	r := NewRelease()
 	d := r.Disc(3)
-	if len(r.Discs) != 3 || d == nil {
-		t.Fail()
-	}
+	assert.Len(t, r.Discs, 3)
+	assert.NotEmpty(t, d)
 }
 
 func TestReleasePerformersCompare(t *testing.T) {
