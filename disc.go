@@ -86,7 +86,8 @@ func (m Media) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON получает тип медиа из значения JSON.
 func (m *Media) UnmarshalJSON(b []byte) error {
-	*m = StrToMedia[string(b)]
+	k := string(b)
+	*m = StrToMedia[k[1:len(k)-1]]
 	return nil
 }
 

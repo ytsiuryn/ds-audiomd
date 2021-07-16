@@ -1,6 +1,7 @@
 package metadata
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -24,6 +25,19 @@ func TestDecodeMedia(t *testing.T) {
 			t.Fail()
 		}
 	}
+}
+
+func TestDiscMediaMarshalAndUnmarshal(t *testing.T) {
+	m := MediaLP
+	data, err := json.Marshal(m)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := json.Unmarshal(data, &m); err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, m, MediaLP)
+
 }
 
 func TestDiscFormatCompare(t *testing.T) {

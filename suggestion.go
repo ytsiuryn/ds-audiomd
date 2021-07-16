@@ -17,14 +17,17 @@ func BestNResults(in []*Suggestion, n int) []*Suggestion {
 // Suggestion has a search result of an online service.
 type Suggestion struct {
 	*Release         `json:"release"`
-	Actors           ActorIDs `json:"actors"`
-	ServiceName      string   `json:"service"`
-	OnlineSuggeston  bool     `json:"online_suggestion"`
-	SourceSimilarity float64  `json:"score"`
+	Actors           ActorIDs          `json:"actors"`
+	Pictures         []*PictureInAudio `json:"pictures,omitempty"`
+	ServiceName      string            `json:"service"`
+	OnlineSuggeston  bool              `json:"online_suggestion"`
+	SourceSimilarity float64           `json:"score"`
 }
 
 func (s *Suggestion) Optimize() {
 	s.Release.Optimize()
 	s.Actors = s.Release.Actors
 	s.Release.Actors = nil
+	s.Pictures = s.Release.Pictures
+	s.Release.Pictures = nil
 }
