@@ -20,12 +20,14 @@ type Suggestion struct {
 	Actors           ActorIDs          `json:"actors"`
 	Pictures         []*PictureInAudio `json:"pictures,omitempty"`
 	ServiceName      string            `json:"service"`
-	OnlineSuggeston  bool              `json:"online_suggestion"`
 	SourceSimilarity float64           `json:"score"`
 }
 
 func (s *Suggestion) Optimize() {
 	s.Release.Optimize()
+	if s.Release == nil {
+		return
+	}
 	s.Actors = s.Release.Actors
 	s.Release.Actors = nil
 	s.Pictures = s.Release.Pictures

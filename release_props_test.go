@@ -10,21 +10,16 @@ import (
 func TestReleaseStatusMarshalAndUnmarshal(t *testing.T) {
 	rs := ReleaseStatusOfficial
 	data, err := json.Marshal(rs)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if err := json.Unmarshal(data, &rs); err != nil {
-		t.Fatal(err)
-	}
+	assert.NoError(t, err)
+	assert.NoError(t, json.Unmarshal(data, &rs))
 	assert.Equal(t, rs, ReleaseStatusOfficial)
 }
 
 func TestReleaseStatusDecode(t *testing.T) {
 	var rs ReleaseStatus
 	for k, v := range StrToReleaseStatus {
-		if rs.Decode(k); rs != v {
-			t.Fail()
-		}
+		rs.Decode(k)
+		assert.Equal(t, rs, v)
 	}
 }
 
@@ -37,12 +32,8 @@ func TestReleaseStatusDecodeSlice(t *testing.T) {
 func TestReleaseTypeMarshalAndUnmarshal(t *testing.T) {
 	rt := ReleaseTypeAlbum
 	data, err := json.Marshal(rt)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if err := json.Unmarshal(data, &rt); err != nil {
-		t.Fatal(err)
-	}
+	assert.NoError(t, err)
+	assert.NoError(t, json.Unmarshal(data, &rt))
 	assert.Equal(t, rt, ReleaseTypeAlbum)
 }
 
@@ -55,12 +46,8 @@ func TestReleaseTypeDecodeSlice(t *testing.T) {
 func TestReleaseRepeatMarshalAndUnmarshal(t *testing.T) {
 	rr := ReleaseRepeatRemake
 	data, err := json.Marshal(rr)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if err := json.Unmarshal(data, &rr); err != nil {
-		t.Fatal(err)
-	}
+	assert.NoError(t, err)
+	assert.NoError(t, json.Unmarshal(data, &rr))
 	assert.Equal(t, rr, ReleaseRepeatRemake)
 }
 
@@ -73,12 +60,8 @@ func TestReleaseRepeatDecodeSlice(t *testing.T) {
 func TestReleaseRemakeMarshalAndUnmarshal(t *testing.T) {
 	rr := ReleaseRemakeRemastered
 	data, err := json.Marshal(rr)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if err := json.Unmarshal(data, &rr); err != nil {
-		t.Fatal(err)
-	}
+	assert.NoError(t, err)
+	assert.NoError(t, json.Unmarshal(data, &rr))
 	assert.Equal(t, rr, ReleaseRemakeRemastered)
 }
 
@@ -91,12 +74,8 @@ func TestReleaseRemakeDecodeSlice(t *testing.T) {
 func TestReleaseOriginMarshalAndUnmarshal(t *testing.T) {
 	ro := ReleaseOriginStudio
 	data, err := json.Marshal(ro)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if err := json.Unmarshal(data, &ro); err != nil {
-		t.Fatal(err)
-	}
+	assert.NoError(t, err)
+	assert.NoError(t, json.Unmarshal(data, &ro))
 	assert.Equal(t, ro, ReleaseOriginStudio)
 }
 

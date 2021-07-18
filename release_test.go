@@ -6,6 +6,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestReleaseStubIsEmpty(t *testing.T) {
+	r := NewRelease()
+	assert.True(t, r.Original.IsEmpty())
+}
+
 func TestReleaseCover(t *testing.T) {
 	r := NewRelease()
 	r.Pictures = append(r.Pictures, &PictureInAudio{PictType: PictTypeArtist})
@@ -137,14 +142,5 @@ func TestReleaseAggregateActors(t *testing.T) {
 	r.aggregateActors()
 	if len(r.Actors) != 1 || len(t1.Actors) != 0 || len(t2.Actors) != 0 {
 		t.Fail()
-	}
-}
-
-func TestReleaseClean(t *testing.T) {
-	r := NewRelease()
-	r.Clean()
-	if r.Original.IDs != nil || r.Original.Tracks != nil || r.Original.Unprocessed != nil ||
-		r.IDs != nil || r.Tracks != nil || r.Unprocessed != nil {
-		t.FailNow()
 	}
 }

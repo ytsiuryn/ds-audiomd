@@ -57,6 +57,36 @@ func NewReleaseStub() *ReleaseStub {
 	}
 }
 
+func (stub *ReleaseStub) IsEmpty() bool {
+	return reflect.DeepEqual(*stub, ReleaseStub{}) ||
+		reflect.DeepEqual(*stub, *NewReleaseStub())
+}
+
+func (stub *ReleaseStub) Clean() {
+	stub.Actors.Clean()
+	if stub.Actors.IsEmpty() {
+		stub.Actors = nil
+	}
+	stub.ActorRoles.Clean()
+	if stub.ActorRoles.IsEmpty() {
+		stub.ActorRoles = nil
+	}
+	for _, d := range stub.Discs {
+		d.Clean()
+	}
+	stub.IDs.Clean()
+	if stub.IDs.IsEmpty() {
+		stub.IDs = nil
+	}
+	stub.Unprocessed.Clean()
+	if stub.Unprocessed.IsEmpty() {
+		stub.Unprocessed = nil
+	}
+	for _, tr := range stub.Tracks {
+		tr.Clean()
+	}
+}
+
 // Cover возвращает объект PictureInAudio, если он описывает обложку альбома, или nil.
 func (r *Release) Cover() *PictureInAudio {
 	for _, pia := range r.Pictures {
@@ -176,46 +206,13 @@ func (r *Release) Optimize() {
 
 // Clean оптимизирует структуры по занимаемой памяти.
 func (r *Release) Clean() {
-	r.Original.Actors.Clean()
-	if r.Original.Actors.IsEmpty() {
-		r.Original.Actors = nil
+	r.Original.Clean()
+	if r.Original.IsEmpty() {
+		r.Original = nil
 	}
-	r.Original.ActorRoles.Clean()
-	if r.Original.ActorRoles.IsEmpty() {
-		r.Original.ActorRoles = nil
-	}
-	for _, d := range r.Discs {
-		d.Clean()
-	}
-	r.Original.IDs.Clean()
-	if r.Original.IDs.IsEmpty() {
-		r.Original.IDs = nil
-	}
-	r.Original.Unprocessed.Clean()
-	if r.Original.Unprocessed.IsEmpty() {
-		r.Original.Unprocessed = nil
-	}
-	for _, tr := range r.Original.Tracks {
-		tr.Clean()
-	}
-	r.Actors.Clean()
-	if r.Actors.IsEmpty() {
-		r.Actors = nil
-	}
-	r.ActorRoles.Clean()
-	if r.ActorRoles.IsEmpty() {
-		r.ActorRoles = nil
-	}
-	r.IDs.Clean()
-	if r.IDs.IsEmpty() {
-		r.IDs = nil
-	}
-	r.Unprocessed.Clean()
-	if r.Unprocessed.IsEmpty() {
-		r.Unprocessed = nil
-	}
-	for _, tr := range r.Tracks {
-		tr.Clean()
+	r.ReleaseStub.Clean()
+	if r.ReleaseStub.IsEmpty() {
+		r.ReleaseStub = nil
 	}
 }
 
