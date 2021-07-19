@@ -14,35 +14,35 @@ func BestNResults(in []*Suggestion, n int) []*Suggestion {
 	return in[:intutils.MinOf(n, len(in))]
 }
 
-// Suggestion has a search result of an online service.
+// Suggestion используется внешними сервисами для хранения единичного результата.
 type Suggestion struct {
 	*Release         `json:"release"`
-	Pictures         []*PictureInAudio `json:"pictures,omitempty"`
-	ServiceName      string            `json:"service"`
-	SourceSimilarity float64           `json:"score"`
+	ServiceName      string  `json:"service"`
+	SourceSimilarity float64 `json:"score"`
 }
 
+// SuggestionSet объединяет несколько результатов и оптимизирует размер за счет
+// выноса сведений об акторах в отдельную сущность.
 type SuggestionSet struct {
-	Suggestions []*Suggestion     `json:"suggestions"`
-	Actors      ActorIDs          `json:"actors,omitempty"`
-	Pictures    []*PictureInAudio `json:"pictures,omitempty"`
+	Suggestions []*Suggestion `json:"suggestions"`
+	Actors      ActorIDs      `json:"actors,omitempty"`
 }
 
+// NewSuggestionSet создает объект коллекции результатов SuggestionSet.
 func NewSuggestionSet() *SuggestionSet {
 	return &SuggestionSet{
 		Suggestions: []*Suggestion{},
-		Actors:      ActorIDs{},
-		Pictures:    []*PictureInAudio{}}
+		Actors:      ActorIDs{}}
 }
 
+// Optimize оптимизирует релиз-данные для каждого результата и аггрегирует коды
+// акторов во внешних БД в поле Actors.
 func (ss *SuggestionSet) Optimize() {
 	for _, s := range ss.Suggestions {
 		s.Release.Optimize()
 		if s.Release == nil {
 			continue
 		}
-		s.Pictures = s.Release.Pictures
-		s.Release.Pictures = nil
 		for actor, ids := range s.Release.Actors {
 			if oldIDs, ok := ss.Actors[actor]; !ok {
 				ss.Actors[actor] = ids
