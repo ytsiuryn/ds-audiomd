@@ -15,14 +15,3 @@ func TestSuggestionBestNResults(t *testing.T) {
 	assert.Contains(t, res, s1)
 	assert.Contains(t, res, s3)
 }
-
-func TestSuggestionsOptimize(t *testing.T) {
-	r := NewRelease()
-	r.Title = "Test"
-	s := Suggestion{
-		Release:  r,
-		Actors:   ActorIDs{},
-		Pictures: []*PictureInAudio{}}
-	s.Optimize()
-	assert.Nil(t, s.Release.Original)
-}
