@@ -78,6 +78,10 @@ func (stub *ReleaseStub) Clean() {
 	if stub.IDs.IsEmpty() {
 		stub.IDs = nil
 	}
+	// stub.Pictures.Clean()
+	// if stub.Pictures.IsEmpty() {
+	// 	stub.Pictures = nil
+	// }
 	stub.Unprocessed.Clean()
 	if stub.Unprocessed.IsEmpty() {
 		stub.Unprocessed = nil

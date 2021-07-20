@@ -88,6 +88,7 @@ type PictureMetadata struct {
 }
 
 // PictureInAudio describes some picture of the type PictType.
+// TODO: реализовать методы Clean() и IsEmpty().
 type PictureInAudio struct {
 	*PictureMetadata `json:"pict_meta,omitempty"`
 	PictType         PictType `json:"pict_type"`
