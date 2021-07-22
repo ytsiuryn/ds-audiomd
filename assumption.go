@@ -1,5 +1,7 @@
 package metadata
 
+import "fmt"
+
 // Assumption хранит результат считывания метаданных из файловых треков.
 type Assumption struct {
 	Release  *Release          `json:"release"`
@@ -15,6 +17,8 @@ func NewAssumption(release *Release) *Assumption {
 	}
 	if release == nil {
 		assumption.Release = NewRelease()
+	} else {
+		assumption.Release = release
 	}
 	return &assumption
 }
@@ -22,12 +26,18 @@ func NewAssumption(release *Release) *Assumption {
 // Optimize оптимизирует исходный релиз и выносит графический материал из Release на уровень
 // выше, если этот материал содержит образ картинки.
 func (as *Assumption) Optimize() {
-	as.Release.Optimize()
 	if as.Release == nil {
 		return
 	}
-	as.Actors = as.Release.Actors
-	as.Release.Actors = nil
+	as.Release.Optimize()
+	if as.Release.ReleaseStub == nil {
+		return
+	}
+	fmt.Printf("%+v\n", as.Release)
+	if as.Release.Actors != nil {
+		as.Actors = as.Release.Actors
+		as.Release.Actors = nil
+	}
 	for i := len(as.Release.Pictures) - 1; i >= 0; i-- {
 		if len(as.Release.Pictures[i].Data) > 0 {
 			as.Pictures = append(as.Pictures, as.Release.Pictures[i])

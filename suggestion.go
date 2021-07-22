@@ -28,6 +28,10 @@ type SuggestionSet struct {
 	Actors      ActorIDs      `json:"actors,omitempty"`
 }
 
+func NewSuggestion() *Suggestion {
+	return &Suggestion{Release: NewRelease()}
+}
+
 // NewSuggestionSet создает объект коллекции результатов SuggestionSet.
 func NewSuggestionSet() *SuggestionSet {
 	return &SuggestionSet{
@@ -41,7 +45,7 @@ func (ss *SuggestionSet) Optimize() {
 	for _, s := range ss.Suggestions {
 		s.Release.Optimize()
 		if s.Release == nil {
-			continue
+			return
 		}
 		for actor, ids := range s.Release.Actors {
 			if oldIDs, ok := ss.Actors[actor]; !ok {

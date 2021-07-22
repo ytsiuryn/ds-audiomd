@@ -15,3 +15,9 @@ func TestSuggestionBestNResults(t *testing.T) {
 	assert.Contains(t, res, s1)
 	assert.Contains(t, res, s3)
 }
+
+func TestSuggestionSetOptimize(t *testing.T) {
+	set := NewSuggestionSet()
+	set.Optimize()
+	set.Optimize()
+}

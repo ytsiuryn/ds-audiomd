@@ -63,9 +63,11 @@ func (stub *ReleaseStub) IsEmpty() bool {
 }
 
 func (stub *ReleaseStub) Clean() {
-	stub.Actors.Clean()
-	if stub.Actors.IsEmpty() {
-		stub.Actors = nil
+	if stub.Actors != nil {
+		stub.Actors.Clean()
+		if stub.Actors.IsEmpty() {
+			stub.Actors = nil
+		}
 	}
 	stub.ActorRoles.Clean()
 	if stub.ActorRoles.IsEmpty() {
@@ -210,13 +212,17 @@ func (r *Release) Optimize() {
 
 // Clean оптимизирует структуры по занимаемой памяти.
 func (r *Release) Clean() {
-	r.Original.Clean()
-	if r.Original.IsEmpty() {
-		r.Original = nil
+	if r.Original != nil {
+		r.Original.Clean()
+		if r.Original.IsEmpty() {
+			r.Original = nil
+		}
 	}
-	r.ReleaseStub.Clean()
-	if r.ReleaseStub.IsEmpty() {
-		r.ReleaseStub = nil
+	if r.ReleaseStub != nil {
+		r.ReleaseStub.Clean()
+		if r.ReleaseStub.IsEmpty() {
+			r.ReleaseStub = nil
+		}
 	}
 }
 
