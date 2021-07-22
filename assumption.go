@@ -2,17 +2,21 @@ package metadata
 
 // Assumption хранит результат считывания метаданных из файловых треков.
 type Assumption struct {
-	*Release `json:"release"`
+	Release  *Release          `json:"release"`
 	Pictures []*PictureInAudio `json:"pictures,omitempty"`
 	Actors   ActorIDs          `json:"actors,omitempty"`
 }
 
 // NewAssumption создает объект типа Assumption и возвращает ссылку на него.
 func NewAssumption(release *Release) *Assumption {
-	return &Assumption{
-		Release:  release,
+	assumption := Assumption{
 		Actors:   ActorIDs{},
-		Pictures: []*PictureInAudio{}}
+		Pictures: []*PictureInAudio{},
+	}
+	if release == nil {
+		assumption.Release = NewRelease()
+	}
+	return &assumption
 }
 
 // Optimize оптимизирует исходный релиз и выносит графический материал из Release на уровень

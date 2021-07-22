@@ -16,9 +16,9 @@ func BestNResults(in []*Suggestion, n int) []*Suggestion {
 
 // Suggestion используется внешними сервисами для хранения единичного результата.
 type Suggestion struct {
-	*Release         `json:"release"`
-	ServiceName      string  `json:"service"`
-	SourceSimilarity float64 `json:"score"`
+	Release          *Release `json:"release"`
+	ServiceName      string   `json:"service"`
+	SourceSimilarity float64  `json:"score"`
 }
 
 // SuggestionSet объединяет несколько результатов и оптимизирует размер за счет
