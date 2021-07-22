@@ -22,7 +22,7 @@ func NewAssumption(release *Release) *Assumption {
 // Optimize оптимизирует исходный релиз и выносит графический материал из Release на уровень
 // выше, если этот материал содержит образ картинки.
 func (as *Assumption) Optimize() {
-	as.Optimize()
+	as.Release.Optimize()
 	if as.Release == nil {
 		return
 	}
