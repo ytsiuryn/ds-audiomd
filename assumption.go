@@ -1,7 +1,5 @@
 package metadata
 
-import "fmt"
-
 // Assumption хранит результат считывания метаданных из файловых треков.
 type Assumption struct {
 	Release  *Release          `json:"release"`
@@ -33,7 +31,6 @@ func (as *Assumption) Optimize() {
 	if as.Release.ReleaseStub == nil {
 		return
 	}
-	fmt.Printf("%+v\n", as.Release)
 	if as.Release.Actors != nil {
 		as.Actors = as.Release.Actors
 		as.Release.Actors = nil

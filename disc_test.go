@@ -33,7 +33,6 @@ func TestDiscMediaMarshalAndUnmarshal(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NoError(t, json.Unmarshal(data, &m))
 	assert.Equal(t, m, MediaLP)
-
 }
 
 func TestDiscFormatCompare(t *testing.T) {

@@ -112,6 +112,7 @@ func (pt PictType) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON ..
 func (pt *PictType) UnmarshalJSON(b []byte) error {
-	*pt = StrToPictType[string(b)]
+	k := string(b)
+	*pt = StrToPictType[k[1:len(k)-1]]
 	return nil
 }

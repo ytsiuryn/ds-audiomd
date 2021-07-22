@@ -1,0 +1,17 @@
+package metadata
+
+import (
+	"encoding/json"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+)
+
+func TestPictTypeUnmarshal(t *testing.T) {
+	pt := PictTypeCoverFront
+	data, err := json.Marshal(pt)
+	require.NoError(t, err)
+	require.NoError(t, json.Unmarshal(data, &pt))
+	assert.Equal(t, pt, PictTypeCoverFront)
+}
