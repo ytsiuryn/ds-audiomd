@@ -56,7 +56,7 @@ func (p *Record) Clean() {
 
 // AddRole добавляет роль для актора записи.
 func (p *Record) AddRole(name, role string) {
-	p.ActorRoles[ActorName(name)] = append(p.ActorRoles[ActorName(name)], role)
+	p.ActorRoles[name] = append(p.ActorRoles[name], role)
 }
 
 // Performers return all album performers.

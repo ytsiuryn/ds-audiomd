@@ -7,7 +7,7 @@ import (
 )
 
 func TestActorIDsAdd(t *testing.T) {
-	var a ActorIDs = map[ActorName]IDs{}
+	var a ActorIDs = map[string]IDs{}
 	a.Add("John Doe", "discogs", "12345")
 	assert.Len(t, a, 1)
 	assert.Len(t, a["John Doe"], 1)
@@ -22,8 +22,8 @@ func TestActorIDsAdd(t *testing.T) {
 }
 func TestActorIDsMerge(t *testing.T) {
 	var a1, a2 ActorIDs
-	a1 = map[ActorName]IDs{"John Doe": {"discogs": "12345"}, "Nemo": {"musicbrainz": "abcd"}}
-	a2 = map[ActorName]IDs{"John Doe": {"musicbrainz": "zyxwv"}, "Nemo": {"musicbrainz": "abcd"}}
+	a1 = map[string]IDs{"John Doe": {"discogs": "12345"}, "Nemo": {"musicbrainz": "abcd"}}
+	a2 = map[string]IDs{"John Doe": {"musicbrainz": "zyxwv"}, "Nemo": {"musicbrainz": "abcd"}}
 	a1.Merge(a2)
 	assert.Len(t, a1["John Doe"], 2)
 	assert.Len(t, a1["Nemo"], 1)

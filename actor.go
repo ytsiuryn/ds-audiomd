@@ -5,28 +5,25 @@ import (
 	stringutils "github.com/ytsiuryn/go-stringutils"
 )
 
-// ActorName ..
-type ActorName string
-
 // Actors хранит ссылки на их коды во внешних БД.
-type ActorIDs map[ActorName]IDs
+type ActorIDs map[string]IDs
 
 // ActorRoles хранит перечень ролей акторов для определенного контекста (релиза, трека,
 // композиции, записи и т.д.).
-type ActorRoles map[ActorName][]string
+type ActorRoles map[string][]string
 
-func IsPerformer(name ActorName, roles []string) bool {
+func IsPerformer(name string, roles []string) bool {
 	return collection.ContainsStr("performer", roles)
 }
 
 // Add добавиляет сведеления об акторе и его коде во некоторой внешней БД, если необходимо.
 func (ai ActorIDs) Add(name, key, val string) {
-	ids, ok := ai[ActorName(name)]
+	ids, ok := ai[name]
 	if !ok {
-		ai[ActorName(name)] = IDs{key: val}
+		ai[name] = IDs{key: val}
 	} else {
 		if _, ok := ids[key]; !ok {
-			ai[ActorName(name)][key] = val
+			ai[name][key] = val
 		}
 	}
 }
@@ -78,14 +75,14 @@ func (ar ActorRoles) Compare(other ActorRoles) float64 {
 
 // Добавить актора и роль, если необходимо.
 func (ar ActorRoles) Add(name, role string) {
-	roles := ar[ActorName(name)]
+	roles := ar[name]
 	if !collection.ContainsStr(role, roles) {
 		roles = append(roles, role)
 	}
-	ar[ActorName(name)] = roles
+	ar[name] = roles
 }
 
-func (ar ActorRoles) Filter(predicat func(name ActorName, roles []string) bool) ActorRoles {
+func (ar ActorRoles) Filter(predicat func(name string, roles []string) bool) ActorRoles {
 	ret := ActorRoles{}
 	for name, roles := range ar {
 		if predicat(name, roles) {
@@ -96,7 +93,7 @@ func (ar ActorRoles) Filter(predicat func(name ActorName, roles []string) bool) 
 }
 
 // First возвращает первый попавшийся ключ-имя или пустую строку.
-func (ac ActorRoles) First() ActorName {
+func (ac ActorRoles) First() string {
 	for actorName := range ac {
 		return actorName
 	}
