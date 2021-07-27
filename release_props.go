@@ -35,18 +35,6 @@ var StrToReleaseStatus = map[string]ReleaseStatus{
 	"outtake":       ReleaseStatusOuttake,
 }
 
-// ReleaseStatusToStr ..
-var ReleaseStatusToStr = map[ReleaseStatus]string{
-	ReleaseStatusOfficial:      "oficial",
-	ReleaseStatusContrafact:    "contrafact",
-	ReleaseStatusBootleg:       "bootleg",
-	ReleaseStatusDemonstration: "demonstration",
-	ReleaseStatusPromotion:     "promotion",
-	ReleaseStatusSampler:       "sampler",
-	ReleaseStatusUpcoming:      "upcoming",
-	ReleaseStatusOuttake:       "outtake",
-}
-
 // ReleaseType ..
 type ReleaseType int8
 
@@ -64,14 +52,6 @@ var StrToReleaseType = map[string]ReleaseType{
 	"maxisingle": ReleaseTypeMaxiSingle,
 	"minialbum":  ReleaseTypeMiniAlbum,
 	"album":      ReleaseTypeAlbum,
-}
-
-// ReleaseTypeToStr ..
-var ReleaseTypeToStr = map[ReleaseType]string{
-	ReleaseTypeSingle:     "single",
-	ReleaseTypeMaxiSingle: "maxisingle",
-	ReleaseTypeMiniAlbum:  "minialbum",
-	ReleaseTypeAlbum:      "album",
 }
 
 // ReleaseRepeat ..
@@ -95,15 +75,6 @@ var StrToReleaseRepeat = map[string]ReleaseRepeat{
 	"remake":      ReleaseRepeatRemake,
 }
 
-// ReleaseRepeatToStr ..
-var ReleaseRepeatToStr = map[ReleaseRepeat]string{
-	ReleaseRepeatRepress:     "repress",
-	ReleaseRepeatReissue:     "reissue",
-	ReleaseRepeatCompilation: "compilation",
-	ReleaseRepeatDiscography: "discography",
-	ReleaseRepeatRemake:      "remake",
-}
-
 // ReleaseRemake ..
 type ReleaseRemake int8
 
@@ -121,14 +92,6 @@ var StrToReleaseRemake = map[string]ReleaseRemake{
 	"tribute":    ReleaseRemakeTribute,
 	"cover":      ReleaseRemakeCover,
 	"remix":      ReleaseRemakeRemix,
-}
-
-// ReleaseRemakeToStr ..
-var ReleaseRemakeToStr = map[ReleaseRemake]string{
-	ReleaseRemakeRemastered: "remastered",
-	ReleaseRemakeTribute:    "tribute",
-	ReleaseRemakeCover:      "cover",
-	ReleaseRemakeRemix:      "remix",
 }
 
 // ReleaseOrigin ..
@@ -156,17 +119,6 @@ var StrToReleaseOrigin = map[string]ReleaseOrigin{
 	"tv":             ReleaseOriginTV,
 }
 
-// ReleaseOriginToStr ..
-var ReleaseOriginToStr = map[ReleaseOrigin]string{
-	ReleaseOriginStudio:         "studio",
-	ReleaseOriginLive:           "live",
-	ReleaseOriginRehearsal:      "rehearsal",
-	ReleaseOriginHome:           "home",
-	ReleaseOriginFieldRecording: "fieldrecording",
-	ReleaseOriginRadio:          "radio",
-	ReleaseOriginTV:             "tv",
-}
-
 // Publishing describes trade label of the release.
 type Publishing struct {
 	Name  string            `json:"name,omitempty"`
@@ -174,9 +126,31 @@ type Publishing struct {
 	IDs   collection.StrMap `json:"ids,omitempty"`
 }
 
+func (rs ReleaseStatus) String() string {
+	switch rs {
+	case ReleaseStatusOfficial:
+		return "oficial"
+	case ReleaseStatusContrafact:
+		return "contrafact"
+	case ReleaseStatusBootleg:
+		return "bootleg"
+	case ReleaseStatusDemonstration:
+		return "demonstration"
+	case ReleaseStatusPromotion:
+		return "promotion"
+	case ReleaseStatusSampler:
+		return "sampler"
+	case ReleaseStatusUpcoming:
+		return "upcoming"
+	case ReleaseStatusOuttake:
+		return "outtake"
+	}
+	return ""
+}
+
 // MarshalJSON ..
 func (rs ReleaseStatus) MarshalJSON() ([]byte, error) {
-	return json.Marshal(ReleaseStatusToStr[rs])
+	return json.Marshal(rs.String())
 }
 
 // UnmarshalJSON ..
@@ -204,9 +178,23 @@ func (rs *ReleaseStatus) DecodeSlice(props *[]string) {
 	}
 }
 
+func (rt ReleaseType) String() string {
+	switch rt {
+	case ReleaseTypeSingle:
+		return "single"
+	case ReleaseTypeMaxiSingle:
+		return "maxisingle"
+	case ReleaseTypeMiniAlbum:
+		return "minialbum"
+	case ReleaseTypeAlbum:
+		return "album"
+	}
+	return ""
+}
+
 // MarshalJSON ..
 func (rt ReleaseType) MarshalJSON() ([]byte, error) {
-	return json.Marshal(ReleaseTypeToStr[rt])
+	return json.Marshal(rt.String())
 }
 
 // UnmarshalJSON ..
@@ -227,9 +215,25 @@ func (rt *ReleaseType) DecodeSlice(props *[]string) {
 	}
 }
 
+func (rr ReleaseRepeat) String() string {
+	switch rr {
+	case ReleaseRepeatRepress:
+		return "repress"
+	case ReleaseRepeatReissue:
+		return "reissue"
+	case ReleaseRepeatCompilation:
+		return "compilation"
+	case ReleaseRepeatDiscography:
+		return "discography"
+	case ReleaseRepeatRemake:
+		return "remake"
+	}
+	return ""
+}
+
 // MarshalJSON ..
 func (rr ReleaseRepeat) MarshalJSON() ([]byte, error) {
-	return json.Marshal(ReleaseRepeatToStr[rr])
+	return json.Marshal(rr.String())
 }
 
 // UnmarshalJSON ..
@@ -250,9 +254,23 @@ func (rr *ReleaseRepeat) DecodeSlice(props *[]string) {
 	}
 }
 
+func (rr ReleaseRemake) String() string {
+	switch rr {
+	case ReleaseRemakeRemastered:
+		return "remastered"
+	case ReleaseRemakeTribute:
+		return "tribute"
+	case ReleaseRemakeCover:
+		return "cover"
+	case ReleaseRemakeRemix:
+		return "remix"
+	}
+	return ""
+}
+
 // MarshalJSON ..
 func (rr ReleaseRemake) MarshalJSON() ([]byte, error) {
-	return json.Marshal(ReleaseRemakeToStr[rr])
+	return json.Marshal(rr.String())
 }
 
 // UnmarshalJSON ..
@@ -273,9 +291,29 @@ func (rr *ReleaseRemake) DecodeSlice(props *[]string) {
 	}
 }
 
+func (ro ReleaseOrigin) String() string {
+	switch ro {
+	case ReleaseOriginStudio:
+		return "studio"
+	case ReleaseOriginLive:
+		return "live"
+	case ReleaseOriginRehearsal:
+		return "rehearsal"
+	case ReleaseOriginHome:
+		return "home"
+	case ReleaseOriginFieldRecording:
+		return "fieldrecording"
+	case ReleaseOriginRadio:
+		return "radio"
+	case ReleaseOriginTV:
+		return "tv"
+	}
+	return ""
+}
+
 // MarshalJSON ..
 func (ro ReleaseOrigin) MarshalJSON() ([]byte, error) {
-	return json.Marshal(ReleaseOriginToStr[ro])
+	return json.Marshal(ro.String())
 }
 
 // UnmarshalJSON ..

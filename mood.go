@@ -34,18 +34,6 @@ var StrToMood = map[string]Mood{
 	"contentment": ContentmentMood,
 }
 
-// MoodToStr ..
-var MoodToStr = map[Mood]string{
-	HappyMood:       "happy",
-	ExuberantMood:   "exuberant",
-	EnergeticMood:   "energetic",
-	FranticMood:     "frantic",
-	AnxiousSadMood:  "anxious_sad",
-	Depression:      "depression",
-	CalmMood:        "calm",
-	ContentmentMood: "contentment",
-}
-
 // Moods хранит перечень настроений, характерных при прослушивании трека/альбома.
 type Moods []Mood
 
@@ -59,9 +47,31 @@ func MoodFromName(moodName string) Mood {
 	return ret
 }
 
+func (m Mood) String() string {
+	switch m {
+	case HappyMood:
+		return "happy"
+	case ExuberantMood:
+		return "exuberant"
+	case EnergeticMood:
+		return "energetic"
+	case FranticMood:
+		return "frantic"
+	case AnxiousSadMood:
+		return "anxious_sad"
+	case Depression:
+		return "depression"
+	case CalmMood:
+		return "calm"
+	case ContentmentMood:
+		return "contentment"
+	}
+	return ""
+}
+
 // MarshalJSON ..
 func (m Mood) MarshalJSON() ([]byte, error) {
-	return json.Marshal(MoodToStr[m])
+	return json.Marshal(m.String())
 }
 
 // UnmarshalJSON ..

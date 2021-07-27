@@ -29,30 +29,6 @@ const (
 	PictTypePublisherLogotype
 )
 
-// PictTypeToStr - строковое значение типа изображения.
-var PictTypeToStr = map[PictType]string{
-	PictTypePNGIcon:           "png_icon",
-	PictTypeOtherIcon:         "other_icon",
-	PictTypeCoverFront:        "cover_front",
-	PictTypeCoverBack:         "cover_back",
-	PictTypeLeaflet:           "leaflet",
-	PictTypeMedia:             "media",
-	PictTypeLadArtist:         "lad_artist",
-	PictTypeArtist:            "artist",
-	PictTypeConductor:         "conductor",
-	PictTypeOrchestra:         "orchestra",
-	PictTypeComposer:          "composer",
-	PictTypeLyricist:          "lyricist",
-	PictTypeRecordingLocation: "recording_location",
-	PictTypeDuringRecording:   "during_recording",
-	PictTypeDuringPerformance: "during_performance",
-	PictTypeMovieScreen:       "movie_screen",
-	PictTypeBrightColorFish:   "bright_color_fish",
-	PictTypeIllustration:      "illustration",
-	PictTypeArtistLogotype:    "artist_logotype",
-	PictTypePublisherLogotype: "publisher_logotype",
-}
-
 // StrToPictType ..
 var StrToPictType = map[string]PictType{
 	"png_icon":           PictTypePNGIcon,
@@ -105,9 +81,55 @@ type PictureInAudio struct {
 // 	Notes string `json:"notes,omitempty"`
 // }
 
+func (pt PictType) String() string {
+	switch pt {
+	case PictTypePNGIcon:
+		return "png_icon"
+	case PictTypeOtherIcon:
+		return "other_icon"
+	case PictTypeCoverFront:
+		return "cover_front"
+	case PictTypeCoverBack:
+		return "cover_back"
+	case PictTypeLeaflet:
+		return "leaflet"
+	case PictTypeMedia:
+		return "media"
+	case PictTypeLadArtist:
+		return "lad_artist"
+	case PictTypeArtist:
+		return "artist"
+	case PictTypeConductor:
+		return "conductor"
+	case PictTypeOrchestra:
+		return "orchestra"
+	case PictTypeComposer:
+		return "composer"
+	case PictTypeLyricist:
+		return "lyricist"
+	case PictTypeRecordingLocation:
+		return "recording_location"
+	case PictTypeDuringRecording:
+		return "during_recording"
+	case PictTypeDuringPerformance:
+		return "during_performance"
+	case PictTypeMovieScreen:
+		return "movie_screen"
+	case PictTypeBrightColorFish:
+		return "bright_color_fish"
+	case PictTypeIllustration:
+		return "illustration"
+	case PictTypeArtistLogotype:
+		return "artist_logotype"
+	case PictTypePublisherLogotype:
+		return "publisher_logotype"
+	}
+	return ""
+}
+
 // MarshalJSON ..
 func (pt PictType) MarshalJSON() ([]byte, error) {
-	return json.Marshal(PictTypeToStr[pt])
+	return json.Marshal(pt.String())
 }
 
 // UnmarshalJSON ..

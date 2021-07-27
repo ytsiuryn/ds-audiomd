@@ -20,15 +20,6 @@ const (
 	MediaLP
 )
 
-// MediaToStr ..
-var MediaToStr = map[Media]string{
-	MediaSACD:    "sacd",
-	MediaCD:      "cd",
-	MediaDigital: "digital",
-	MediaReeL:    "reel",
-	MediaLP:      "lp",
-}
-
 // StrToMedia ..
 var StrToMedia = map[string]Media{
 	"sacd":    MediaSACD,
@@ -79,9 +70,25 @@ func DecodeMedia(v string) Media {
 	return ret
 }
 
+func (m Media) String() string {
+	switch m {
+	case MediaSACD:
+		return "sacd"
+	case MediaCD:
+		return "cd"
+	case MediaDigital:
+		return "digital"
+	case MediaReeL:
+		return "reel"
+	case MediaLP:
+		return "lp"
+	}
+	return ""
+}
+
 // MarshalJSON преобразует значение типа медиа к JSON формату.
 func (m Media) MarshalJSON() ([]byte, error) {
-	return json.Marshal(MediaToStr[m])
+	return json.Marshal(m.String())
 }
 
 // UnmarshalJSON получает тип медиа из значения JSON.
