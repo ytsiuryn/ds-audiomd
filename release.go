@@ -19,6 +19,7 @@ const (
 	MusicbrainzOriginalAlbumID
 	MusicbrainzReleaseGroupID
 	Rutracker
+	AccurateRip
 )
 
 func (rid ReleaseID) String() string {
@@ -33,6 +34,8 @@ func (rid ReleaseID) String() string {
 		return "MusicbrainzReleaseGroupID"
 	case Rutracker:
 		return "Rutracker"
+	case AccurateRip:
+		return "AccurateRip"
 	}
 	return ""
 }
