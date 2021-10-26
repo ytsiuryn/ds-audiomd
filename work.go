@@ -15,6 +15,11 @@ const (
 	MusicbrainzWorkID WorkID = iota + 1
 )
 
+// StrToWorkID ..
+var StrToWorkID = map[string]WorkID{
+	"MusicbrainzWorkID": MusicbrainzWorkID,
+}
+
 func (wid WorkID) String() string {
 	switch wid {
 	case MusicbrainzWorkID:
@@ -26,6 +31,13 @@ func (wid WorkID) String() string {
 // MarshalJSON ..
 func (wid WorkID) MarshalJSON() ([]byte, error) {
 	return json.Marshal(wid.String())
+}
+
+// UnmarshalJSON получает тип медиа из значения JSON.
+func (wid *WorkID) UnmarshalJSON(b []byte) error {
+	k := string(b)
+	*wid = StrToWorkID[k[1:len(k)-1]]
+	return nil
 }
 
 // Work это часть произведения (композиция) или произведение целиком.

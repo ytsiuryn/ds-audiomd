@@ -50,13 +50,13 @@ func TestReleasePerformersCompare(t *testing.T) {
 
 func TestReleasePubCompare(t *testing.T) {
 	r := NewRelease()
-	r.Publishing = append(r.Publishing, NewReleaseLabel("Analog Audio"))
+	r.Publishing.Labels = append(r.Publishing.Labels, NewLabel("Analog Audio", ""))
 	r2 := NewRelease()
 	if res, weight := r.pubCompare(r2); res != 0. || weight != 0. {
 		t.Fail()
 	}
-	r2.Publishing = append(r2.Publishing, NewReleaseLabel("RCA"))
-	r2.Publishing = append(r2.Publishing, NewReleaseLabel("Analog Audio"))
+	r2.Publishing.Labels = append(r2.Publishing.Labels, NewLabel("RCA", ""))
+	r2.Publishing.Labels = append(r2.Publishing.Labels, NewLabel("Analog Audio", ""))
 	if res, weight := r.pubCompare(r2); res != .99 || weight != 1. {
 		t.Fail()
 	}

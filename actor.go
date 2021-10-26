@@ -18,13 +18,24 @@ type ActorID uint8
 
 // Допустимые значения идентификаторов релиза во внешних БД.
 const (
-	MusicbrainzAlbumArtistID ActorID = iota + 1
+	DiscogsArtistID ActorID = iota + 1
+	MusicbrainzAlbumArtistID
 	MusicbrainzArtistID
 	MusicbrainzOriginalArtistID
 )
 
+// StrToActorID ..
+var StrToActorID = map[string]ActorID{
+	"DiscogsArtistID":             DiscogsArtistID,
+	"MusicbrainzAlbumArtistID":    MusicbrainzAlbumArtistID,
+	"MusicbrainzArtistID":         MusicbrainzArtistID,
+	"MusicbrainzOriginalArtistID": MusicbrainzOriginalArtistID,
+}
+
 func (aid ActorID) String() string {
 	switch aid {
+	case DiscogsArtistID:
+		return "DiscogsArtistID"
 	case MusicbrainzAlbumArtistID:
 		return "MusicbrainzAlbumArtistID"
 	case MusicbrainzArtistID:
@@ -38,6 +49,13 @@ func (aid ActorID) String() string {
 // MarshalJSON ..
 func (aid ActorID) MarshalJSON() ([]byte, error) {
 	return json.Marshal(aid.String())
+}
+
+// UnmarshalJSON получает тип ActorID из значения JSON.
+func (aid *ActorID) UnmarshalJSON(b []byte) error {
+	k := string(b)
+	*aid = StrToActorID[k[1:len(k)-1]]
+	return nil
 }
 
 // ActorIDs хранит ссылки на их коды во внешних БД.

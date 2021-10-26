@@ -14,6 +14,12 @@ const (
 	ISRC
 )
 
+// StrToRecordingID ..
+var StrToRecordingID = map[string]RecordingID{
+	"MusicbrainzRecordingID": MusicbrainzRecordingID,
+	"ISRC":                   ISRC,
+}
+
 func (rid RecordingID) String() string {
 	switch rid {
 	case MusicbrainzRecordingID:
@@ -27,6 +33,13 @@ func (rid RecordingID) String() string {
 // MarshalJSON ..
 func (rid RecordingID) MarshalJSON() ([]byte, error) {
 	return json.Marshal(rid.String())
+}
+
+// UnmarshalJSON получает тип RecordingID из значения JSON.
+func (rid *RecordingID) UnmarshalJSON(b []byte) error {
+	k := string(b)
+	*rid = StrToRecordingID[k[1:len(k)-1]]
+	return nil
 }
 
 // RecordSession описывает общие свойства сессии записи.

@@ -22,6 +22,12 @@ const (
 	MusicbrainzTrackID
 )
 
+// StrToTrackID ..
+var StrToTrackID = map[string]TrackID{
+	"MusicbrainzReleaseTrackID": MusicbrainzReleaseTrackID,
+	"MusicbrainzTrackID":        MusicbrainzTrackID,
+}
+
 func (tid TrackID) String() string {
 	switch tid {
 	case MusicbrainzReleaseTrackID:
@@ -35,6 +41,13 @@ func (tid TrackID) String() string {
 // MarshalJSON ..
 func (tid TrackID) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tid.String())
+}
+
+// UnmarshalJSON получает тип TrackID из значения JSON.
+func (tid *TrackID) UnmarshalJSON(b []byte) error {
+	k := string(b)
+	*tid = StrToTrackID[k[1:len(k)-1]]
+	return nil
 }
 
 // FileInfo describes the common file track properties.

@@ -15,17 +15,21 @@ type ReleaseID uint8
 // Допустимые значения идентификаторов релиза во внешних БД.
 const (
 	DiscogsReleaseID ReleaseID = iota + 1
+	DiscogsMasterID
 	MusicbrainzAlbumID
 	MusicbrainzOriginalAlbumID
 	MusicbrainzReleaseGroupID
 	Rutracker
 	AccurateRip
+	Asin
 )
 
 func (rid ReleaseID) String() string {
 	switch rid {
 	case DiscogsReleaseID:
 		return "DiscogsReleaseID"
+	case DiscogsMasterID:
+		return "DiscogsMasterID"
 	case MusicbrainzAlbumID:
 		return "MusicbrainzAlbumID"
 	case MusicbrainzOriginalAlbumID:
@@ -40,9 +44,27 @@ func (rid ReleaseID) String() string {
 	return ""
 }
 
+// StrToReleaseID ..
+var StrToReleaseID = map[string]ReleaseID{
+	"DiscogsReleaseID":           DiscogsReleaseID,
+	"DiscogsMasterID":            DiscogsMasterID,
+	"MusicbrainzAlbumID":         MusicbrainzAlbumID,
+	"MusicbrainzOriginalAlbumID": MusicbrainzOriginalAlbumID,
+	"MusicbrainzReleaseGroupID":  MusicbrainzReleaseGroupID,
+	"Rutracker":                  Rutracker,
+	"AccurateRip":                AccurateRip,
+}
+
 // MarshalJSON ..
 func (rid ReleaseID) MarshalJSON() ([]byte, error) {
 	return json.Marshal(rid.String())
+}
+
+// UnmarshalJSON получает тип ReleaseID из значения JSON.
+func (rid *ReleaseID) UnmarshalJSON(b []byte) error {
+	k := string(b)
+	*rid = StrToReleaseID[k[1:len(k)-1]]
+	return nil
 }
 
 // Release описывает коммерческую суть альбома из репозитория.
@@ -53,15 +75,15 @@ type Release struct {
 
 // ReleaseStub отражает коммерческую суть продажи альбома.
 type ReleaseStub struct {
-	Title         string        `json:"title"`
-	TotalDiscs    int           `json:"total_discs,omitempty"`
-	Discs         []*Disc       `json:"discs,omitempty"`
-	TotalTracks   int           `json:"total_tracks,omitempty"`
-	Tracks        []*Track      `json:"tracks,omitempty"`
-	Publishing    []*Publishing `json:"publishing,omitempty"`
-	Country       string        `json:"country,omitempty"`
-	Year          int           `json:"year,omitempty"`
-	Notes         string        `json:"notes,omitempty"`
+	Title         string      `json:"title"`
+	TotalDiscs    int         `json:"total_discs,omitempty"`
+	Discs         []*Disc     `json:"discs,omitempty"`
+	TotalTracks   int         `json:"total_tracks,omitempty"`
+	Tracks        []*Track    `json:"tracks,omitempty"`
+	Publishing    *Publishing `json:"publishing,omitempty"`
+	Country       string      `json:"country,omitempty"`
+	Year          int         `json:"year,omitempty"`
+	Notes         string      `json:"notes,omitempty"`
 	ReleaseStatus `json:"release_status,omitempty"`
 	ReleaseType   `json:"release_type,omitempty"`
 	ReleaseRepeat `json:"release_repeat,omitempty"`
@@ -88,6 +110,7 @@ func NewReleaseStub() *ReleaseStub {
 	return &ReleaseStub{
 		Actors:      ActorIDs{},
 		ActorRoles:  ActorRoles{},
+		Publishing:  NewPublishing(),
 		IDs:         map[ReleaseID]string{},
 		Unprocessed: map[string]string{},
 	}
@@ -190,22 +213,10 @@ func (r *Release) performersCompare(other *Release) (float64, float64) {
 }
 
 func (r *Release) pubCompare(other *Release) (float64, float64) {
-	if len(r.Publishing) == 0 || len(other.Publishing) == 0 {
+	if r.Publishing.IsEmpty() || other.Publishing.IsEmpty() {
 		return 0., 0.
 	}
-	var max, res float64
-	for _, pub := range r.Publishing {
-		for _, pub2 := range other.Publishing {
-			res = pub.Compare(pub2)
-			if res == 1. {
-				return 1., 0
-			}
-			if max < res {
-				max = res
-			}
-		}
-	}
-	return max, 1.
+	return r.Publishing.Compare(other.Publishing), 1.
 }
 
 func (r *Release) tracksCompare(other *Release) (float64, float64) {
