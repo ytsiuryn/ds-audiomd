@@ -3,9 +3,6 @@ package metadata
 import (
 	"encoding/json"
 	"strings"
-
-	collection "github.com/ytsiuryn/go-collection"
-	stringutils "github.com/ytsiuryn/go-stringutils"
 )
 
 // ReleaseStatus ..
@@ -117,13 +114,6 @@ var StrToReleaseOrigin = map[string]ReleaseOrigin{
 	"fieldrecording": ReleaseOriginFieldRecording,
 	"radio":          ReleaseOriginRadio,
 	"tv":             ReleaseOriginTV,
-}
-
-// Publishing describes trade label of the release.
-type Publishing struct {
-	Name  string            `json:"name,omitempty"`
-	Catno string            `json:"catno,omitempty"`
-	IDs   collection.StrMap `json:"ids,omitempty"`
 }
 
 func (rs ReleaseStatus) String() string {
@@ -332,17 +322,4 @@ func (ro *ReleaseOrigin) DecodeSlice(props *[]string) {
 			return
 		}
 	}
-}
-
-// NewReleaseLabel creates a new copy of ReleaseLabel object.
-func NewReleaseLabel(name string) *Publishing {
-	return &Publishing{Name: name, IDs: *collection.NewStrMap()}
-}
-
-// Compare a ReleaseLabel object with other one.
-func (rl *Publishing) Compare(other *Publishing) float64 {
-	if rl.Catno != "" && rl.Catno != other.Catno {
-		return 1.
-	}
-	return stringutils.JaroWinklerDistance(rl.Name, other.Name) * .99
 }

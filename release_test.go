@@ -134,9 +134,9 @@ func TestReleaseAggregateUnprocessed(t *testing.T) {
 func TestReleaseAggregateActors(t *testing.T) {
 	r := NewRelease()
 	t1 := NewTrack()
-	t1.Actors["Nemo"] = IDs{"discogs": "12345"}
+	t1.Actors["Nemo"] = map[ActorID]string{MusicbrainzAlbumArtistID: "12345"}
 	t2 := NewTrack()
-	t2.Actors["Nemo"] = IDs{"discogs": "12345"}
+	t2.Actors["Nemo"] = map[ActorID]string{MusicbrainzAlbumArtistID: "12345"}
 	r.Tracks = append(r.Tracks, t1, t2)
 	r.wg.Add(1)
 	r.aggregateActors()

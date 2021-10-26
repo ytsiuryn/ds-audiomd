@@ -1,10 +1,33 @@
 package metadata
 
 import (
+	"encoding/json"
 	"reflect"
-
-	collection "github.com/ytsiuryn/go-collection"
 )
+
+// RecordingID тип для перечисления идентификаторов записи трека во внешних БД.
+type RecordingID uint8
+
+// Допустимые значения идентификаторов релиза во внешних БД.
+const (
+	MusicbrainzRecordingID RecordingID = iota + 1
+	ISRC
+)
+
+func (rid RecordingID) String() string {
+	switch rid {
+	case MusicbrainzRecordingID:
+		return "MusicbrainzRecordingID"
+	case ISRC:
+		return "ISRC"
+	}
+	return ""
+}
+
+// MarshalJSON ..
+func (rid RecordingID) MarshalJSON() ([]byte, error) {
+	return json.Marshal(rid.String())
+}
 
 // RecordSession описывает общие свойства сессии записи.
 type RecordSession struct {
@@ -15,13 +38,13 @@ type RecordSession struct {
 
 // Record содержит сведения о записи композиции.
 type Record struct {
-	Duration   int32             `json:"duration,omitempty"`
-	Actors     ActorIDs          `json:"actors,omitempty"`
-	ActorRoles ActorRoles        `json:"actor_roles,omitempty"`
-	Moods      Moods             `json:"moods,omitempty"`
-	Genres     []string          `json:"genres,omitempty"`
-	IDs        collection.StrMap `json:"ids,omitempty"` // ISRC, MusicbrainzRecordID
-	Notes      string            `json:"notes,omitempty"`
+	Duration   int32                  `json:"duration,omitempty"`
+	Actors     ActorIDs               `json:"actors,omitempty"`
+	ActorRoles ActorRoles             `json:"actor_roles,omitempty"`
+	Moods      Moods                  `json:"moods,omitempty"`
+	Genres     []string               `json:"genres,omitempty"`
+	IDs        map[RecordingID]string `json:"ids,omitempty"`
+	Notes      string                 `json:"notes,omitempty"`
 }
 
 // NewRecord создает новый объект Record.
@@ -29,7 +52,7 @@ func NewRecord() *Record {
 	return &Record{
 		Actors:     ActorIDs{},
 		ActorRoles: ActorRoles{},
-		IDs:        map[string]string{},
+		IDs:        map[RecordingID]string{},
 	}
 }
 
@@ -42,14 +65,13 @@ func (p *Record) IsEmpty() bool {
 func (p *Record) Clean() {
 	p.Actors.Clean()
 	p.ActorRoles.Clean()
-	p.IDs.Clean()
 	if p.Actors.IsEmpty() {
 		p.Actors = nil
 	}
 	if p.ActorRoles.IsEmpty() {
 		p.ActorRoles = nil
 	}
-	if p.IDs.IsEmpty() {
+	if len(p.IDs) == 0 {
 		p.IDs = nil
 	}
 }

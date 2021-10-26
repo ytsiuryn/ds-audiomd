@@ -20,6 +20,27 @@ const (
 	MediaLP
 )
 
+// DiscID тип для перечисления идентификаторов дисков во внешних БД.
+type DiscID uint8
+
+// Допустимые значения идентификаторов дисков во внешних БД.
+const (
+	ID DiscID = iota + 1
+)
+
+func (did DiscID) String() string {
+	switch did {
+	case ID:
+		return "ID"
+	}
+	return ""
+}
+
+// MarshalJSON ..
+func (did DiscID) MarshalJSON() ([]byte, error) {
+	return json.Marshal(did.String())
+}
+
 // StrToMedia ..
 var StrToMedia = map[string]Media{
 	"sacd":    MediaSACD,
@@ -37,17 +58,15 @@ type DiscFormat struct {
 
 // Disc описывает дополнительные свойства диска. Сам номер диска указывается в объекте трека.
 type Disc struct {
-	Number int         `json:"number"`
-	Title  string      `json:"title,omitempty"`
-	Format *DiscFormat `json:"format,omitempty"`
-	// Возможные значения ключей:
-	// - "id" - код диска, установленный производителем
-	IDs collection.StrMap `json:"ids,omitempty"`
+	Number int               `json:"number"`
+	Title  string            `json:"title,omitempty"`
+	Format *DiscFormat       `json:"format,omitempty"`
+	IDs    map[DiscID]string `json:"ids,omitempty"`
 }
 
 // NewDisc creates and initialize a new DiscExtra object.
 func NewDisc(num int) *Disc {
-	return &Disc{Number: num, Format: &DiscFormat{}, IDs: make(map[string]string)}
+	return &Disc{Number: num, Format: &DiscFormat{}, IDs: make(map[DiscID]string)}
 }
 
 // DecodeMedia converts a string representation of media to a const of Media type.

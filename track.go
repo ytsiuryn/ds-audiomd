@@ -1,6 +1,7 @@
 package metadata
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"unicode"
@@ -11,6 +12,30 @@ import (
 	stringutils "github.com/ytsiuryn/go-stringutils"
 	world "github.com/ytsiuryn/go-world"
 )
+
+// TrackID тип для перечисления идентификаторов трека во внешних БД.
+type TrackID uint8
+
+// Допустимые значения идентификаторов трека во внешних БД.
+const (
+	MusicbrainzReleaseTrackID TrackID = iota + 1
+	MusicbrainzTrackID
+)
+
+func (tid TrackID) String() string {
+	switch tid {
+	case MusicbrainzReleaseTrackID:
+		return "MusicbrainzReleaseTrackID"
+	case MusicbrainzTrackID:
+		return "MusicbrainzTrackID"
+	}
+	return ""
+}
+
+// MarshalJSON ..
+func (tid TrackID) MarshalJSON() ([]byte, error) {
+	return json.Marshal(tid.String())
+}
 
 // FileInfo describes the common file track properties.
 type FileInfo struct {

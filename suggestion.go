@@ -28,6 +28,7 @@ type SuggestionSet struct {
 	Actors      ActorIDs      `json:"actors,omitempty"`
 }
 
+// NewSuggestion ..
 func NewSuggestion() *Suggestion {
 	return &Suggestion{Release: NewRelease()}
 }

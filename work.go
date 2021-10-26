@@ -1,10 +1,32 @@
 package metadata
 
 import (
+	"encoding/json"
 	"reflect"
 
 	collection "github.com/ytsiuryn/go-collection"
 )
+
+// WorkID тип для перечисления идентификаторов композиции/произведения во внешних БД.
+type WorkID uint8
+
+// Допустимые значения идентификаторов композиции/произведения во внешних БД.
+const (
+	MusicbrainzWorkID WorkID = iota + 1
+)
+
+func (wid WorkID) String() string {
+	switch wid {
+	case MusicbrainzWorkID:
+		return "MusicbrainzWorkID"
+	}
+	return ""
+}
+
+// MarshalJSON ..
+func (wid WorkID) MarshalJSON() ([]byte, error) {
+	return json.Marshal(wid.String())
+}
 
 // Work это часть произведения (композиция) или произведение целиком.
 // Для высокоуровневых данных Position может применяться в дилогиях, трилогиях и т.д.

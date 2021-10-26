@@ -4,6 +4,7 @@ import (
 	"github.com/ytsiuryn/go-collection"
 )
 
+// IDs - тип для хранения идентификаторов объектов внешних (online) БД.
 type IDs collection.StrMap
 
 // Merge объединяет данные двух объектов в исходном.

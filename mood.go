@@ -15,7 +15,7 @@ const (
 	EnergeticMood
 	FranticMood
 	AnxiousSadMood
-	Depression
+	DepressionMood
 	CalmMood
 	ContentmentMood
 )
@@ -29,7 +29,7 @@ var StrToMood = map[string]Mood{
 	"energetic":   EnergeticMood,
 	"frantic":     FranticMood,
 	"anxious_sad": AnxiousSadMood,
-	"depression":  Depression,
+	"depression":  DepressionMood,
 	"calm":        CalmMood,
 	"contentment": ContentmentMood,
 }
@@ -59,7 +59,7 @@ func (m Mood) String() string {
 		return "frantic"
 	case AnxiousSadMood:
 		return "anxious_sad"
-	case Depression:
+	case DepressionMood:
 		return "depression"
 	case CalmMood:
 		return "calm"

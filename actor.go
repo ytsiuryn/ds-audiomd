@@ -1,26 +1,62 @@
 package metadata
 
 import (
+	"encoding/json"
+
 	collection "github.com/ytsiuryn/go-collection"
 	stringutils "github.com/ytsiuryn/go-stringutils"
 )
 
-// Actors хранит ссылки на их коды во внешних БД.
-type ActorIDs map[string]IDs
+// ActorName ..
+type ActorName = string
+
+// ActorRole ..
+type ActorRole = string
+
+// ActorID тип для перечисления идентификаторов актора во внешних БД.
+type ActorID uint8
+
+// Допустимые значения идентификаторов релиза во внешних БД.
+const (
+	MusicbrainzAlbumArtistID ActorID = iota + 1
+	MusicbrainzArtistID
+	MusicbrainzOriginalArtistID
+)
+
+func (aid ActorID) String() string {
+	switch aid {
+	case MusicbrainzAlbumArtistID:
+		return "MusicbrainzAlbumArtistID"
+	case MusicbrainzArtistID:
+		return "MusicbrainzArtistID"
+	case MusicbrainzOriginalArtistID:
+		return "MusicbrainzOriginalArtistID"
+	}
+	return ""
+}
+
+// MarshalJSON ..
+func (aid ActorID) MarshalJSON() ([]byte, error) {
+	return json.Marshal(aid.String())
+}
+
+// ActorIDs хранит ссылки на их коды во внешних БД.
+type ActorIDs map[ActorName]map[ActorID]string
 
 // ActorRoles хранит перечень ролей акторов для определенного контекста (релиза, трека,
 // композиции, записи и т.д.).
-type ActorRoles map[string][]string
+type ActorRoles map[ActorName][]ActorRole
 
-func IsPerformer(name string, roles []string) bool {
+// IsPerformer предикатная функция фильтрации исполнителей альбома.
+func IsPerformer(name ActorName, roles []ActorRole) bool {
 	return collection.ContainsStr("performer", roles)
 }
 
-// Add добавиляет сведеления об акторе и его коде во некоторой внешней БД, если необходимо.
-func (ai ActorIDs) Add(name, key, val string) {
+// Add добавляет сведеления об акторе и его коде во некоторой внешней БД, если необходимо.
+func (ai ActorIDs) Add(name ActorName, key ActorID, val string) {
 	ids, ok := ai[name]
 	if !ok {
-		ai[name] = IDs{key: val}
+		ai[name] = map[ActorID]string{key: val}
 	} else {
 		if _, ok := ids[key]; !ok {
 			ai[name][key] = val
@@ -30,8 +66,10 @@ func (ai ActorIDs) Add(name, key, val string) {
 
 // Merge объединяет данные в целевой исходный объект.
 func (ai ActorIDs) Merge(other ActorIDs) {
-	for k, v := range other {
-		ai[k].Merge(v)
+	for actor, ids := range other {
+		for k, v := range ids {
+			ai[actor][k] = v
+		}
 	}
 }
 
@@ -57,6 +95,8 @@ func (ai ActorIDs) Clean() {
 	}
 }
 
+// Compare сравнивает объект с аналогичным и определяет его степень схожести в числовом
+// выражении.
 func (ar ActorRoles) Compare(other ActorRoles) float64 {
 	if len(ar) == 0 || len(other) == 0 {
 		return 0.
@@ -73,8 +113,8 @@ func (ar ActorRoles) Compare(other ActorRoles) float64 {
 	return max
 }
 
-// Добавить актора и роль, если необходимо.
-func (ar ActorRoles) Add(name, role string) {
+// Add добавляет актора и роль, если необходимо.
+func (ar ActorRoles) Add(name ActorName, role ActorRole) {
 	roles := ar[name]
 	if !collection.ContainsStr(role, roles) {
 		roles = append(roles, role)
@@ -82,7 +122,8 @@ func (ar ActorRoles) Add(name, role string) {
 	ar[name] = roles
 }
 
-func (ar ActorRoles) Filter(predicat func(name string, roles []string) bool) ActorRoles {
+// Filter фильтрует коллекцию акторов с определенной функцией-предикатом.
+func (ar ActorRoles) Filter(predicat func(name ActorName, roles []ActorRole) bool) ActorRoles {
 	ret := ActorRoles{}
 	for name, roles := range ar {
 		if predicat(name, roles) {
@@ -93,8 +134,8 @@ func (ar ActorRoles) Filter(predicat func(name string, roles []string) bool) Act
 }
 
 // First возвращает первый попавшийся ключ-имя или пустую строку.
-func (ac ActorRoles) First() string {
-	for actorName := range ac {
+func (ar ActorRoles) First() string {
+	for actorName := range ar {
 		return actorName
 	}
 	return ""

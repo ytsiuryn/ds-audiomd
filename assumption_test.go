@@ -13,7 +13,7 @@ func TestAsumptionOptimize(t *testing.T) {
 	// assumption.Optimize() FIX: double optimizing test
 
 	release := NewRelease()
-	release.Actors["John Doe"] = IDs{"discogs": "12345"}
+	release.Actors["John Doe"] = map[ActorID]string{MusicbrainzAlbumArtistID: "12345"}
 	assumption = NewAssumption(release)
 	assumption.Optimize()
 	assert.Empty(t, assumption.Release.Actors)

@@ -8,6 +8,7 @@ type Assumption struct {
 }
 
 // NewAssumption создает объект типа Assumption и возвращает ссылку на него.
+// Если входной объект равен nil, поле Release будет инициализироваться.
 func NewAssumption(release *Release) *Assumption {
 	assumption := Assumption{
 		Actors:   ActorIDs{},

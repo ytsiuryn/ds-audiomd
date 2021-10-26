@@ -2,6 +2,7 @@ github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
+github.com/stretchr/objx v0.1.0 h1:4G4v2dO3VZwixGIRoQ5Lfboy6nUhCyYzaqnIAPPhYs4=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.7.0 h1:nwc3DEeHmmLAfoZucVR881uASk0Mfjw8xYJ99tb5CcY=
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
@@ -11,6 +12,8 @@ github.com/ytsiuryn/go-intutils v0.0.2 h1:r2nV3r6TnhGrezcvtfryNkN6mUpAfRo99hvbhw
 github.com/ytsiuryn/go-intutils v0.0.2/go.mod h1:mvoxfjDlT6Kgw0PWIOjjfeJnYWkh2uLYLHwYjRTImpk=
 github.com/ytsiuryn/go-stringutils v0.0.3 h1:bp/gRfix96IaaqzsdP88ZyylOLrrBF/p2wLkeVUL0Pk=
 github.com/ytsiuryn/go-stringutils v0.0.3/go.mod h1:zF2PaXyo3nQnMpleDZXYN762uHJuBUobzYO4CZc3rOU=
+github.com/ytsiuryn/go-stringutils v0.0.4 h1:oq2U4dpxVO8mF3vXxTQJGqhCAabp+u+djwOn2zQhZfk=
+github.com/ytsiuryn/go-stringutils v0.0.4/go.mod h1:zF2PaXyo3nQnMpleDZXYN762uHJuBUobzYO4CZc3rOU=
 github.com/ytsiuryn/go-world v0.0.2 h1:9lFzOkaRnfP3uiSKp/Y56K3L5SkX+Zf/B8CbnBGQ7wU=
 github.com/ytsiuryn/go-world v0.0.2/go.mod h1:tAb2/7a8OjFVmycmd7HaJ/BNDIN8K7g/K2EmhmL6joI=
 golang.org/x/text v0.3.6 h1:aRYxNxv6iGQlyVaZmk6ZgYEDa+Jg18DxebPSrd6bg1M=

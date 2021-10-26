@@ -1,12 +1,46 @@
 package metadata
 
 import (
+	"encoding/json"
 	"reflect"
 	"sync"
 
 	collection "github.com/ytsiuryn/go-collection"
 	stringutils "github.com/ytsiuryn/go-stringutils"
 )
+
+// ReleaseID тип для перечисления идентификаторов релиза во внешних БД.
+type ReleaseID uint8
+
+// Допустимые значения идентификаторов релиза во внешних БД.
+const (
+	DiscogsReleaseID ReleaseID = iota + 1
+	MusicbrainzAlbumID
+	MusicbrainzOriginalAlbumID
+	MusicbrainzReleaseGroupID
+	Rutracker
+)
+
+func (rid ReleaseID) String() string {
+	switch rid {
+	case DiscogsReleaseID:
+		return "DiscogsReleaseID"
+	case MusicbrainzAlbumID:
+		return "MusicbrainzAlbumID"
+	case MusicbrainzOriginalAlbumID:
+		return "MusicbrainzOriginalAlbumID"
+	case MusicbrainzReleaseGroupID:
+		return "MusicbrainzReleaseGroupID"
+	case Rutracker:
+		return "Rutracker"
+	}
+	return ""
+}
+
+// MarshalJSON ..
+func (rid ReleaseID) MarshalJSON() ([]byte, error) {
+	return json.Marshal(rid.String())
+}
 
 // Release описывает коммерческую суть альбома из репозитория.
 type Release struct {
@@ -30,13 +64,12 @@ type ReleaseStub struct {
 	ReleaseRepeat `json:"release_repeat,omitempty"`
 	ReleaseRemake `json:"release_remake,omitempty"`
 	ReleaseOrigin `json:"release_origin,omitempty"`
-	Actors        ActorIDs   `json:"actors,omitempty"`
-	ActorRoles    ActorRoles `json:"actors_roles,omitempty"`
-	// идентификаторы online БД ("discogs", "musicbrainz", "rutracker")
-	IDs         collection.StrMap `json:"ids,omitempty"`
-	Pictures    []*PictureInAudio `json:"pictures,omitempty"`
-	Unprocessed collection.StrMap `json:"unprocessed,omitempty"` // for ext view mode
-	wg          sync.WaitGroup
+	Actors        ActorIDs             `json:"actors,omitempty"`
+	ActorRoles    ActorRoles           `json:"actors_roles,omitempty"`
+	IDs           map[ReleaseID]string `json:"ids,omitempty"`
+	Pictures      []*PictureInAudio    `json:"pictures,omitempty"`
+	Unprocessed   collection.StrMap    `json:"unprocessed,omitempty"` // for ext view mode
+	wg            sync.WaitGroup
 }
 
 // NewRelease construct a new release object.
@@ -52,16 +85,19 @@ func NewReleaseStub() *ReleaseStub {
 	return &ReleaseStub{
 		Actors:      ActorIDs{},
 		ActorRoles:  ActorRoles{},
-		IDs:         map[string]string{},
+		IDs:         map[ReleaseID]string{},
 		Unprocessed: map[string]string{},
 	}
 }
 
+// IsEmpty проверяет возможность сбросить ссылку на объект в nil, если все его поля
+// установлены в нулевое значение.
 func (stub *ReleaseStub) IsEmpty() bool {
 	return reflect.DeepEqual(*stub, ReleaseStub{}) ||
 		reflect.DeepEqual(*stub, *NewReleaseStub())
 }
 
+// Clean ..
 func (stub *ReleaseStub) Clean() {
 	if stub.Actors != nil {
 		stub.Actors.Clean()
@@ -76,8 +112,7 @@ func (stub *ReleaseStub) Clean() {
 	for _, d := range stub.Discs {
 		d.Clean()
 	}
-	stub.IDs.Clean()
-	if stub.IDs.IsEmpty() {
+	if len(stub.IDs) == 0 {
 		stub.IDs = nil
 	}
 	// stub.Pictures.Clean()
