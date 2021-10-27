@@ -40,6 +40,8 @@ func (rid ReleaseID) String() string {
 		return "Rutracker"
 	case AccurateRip:
 		return "AccurateRip"
+	case Asin:
+		return "Asin"
 	}
 	return ""
 }
@@ -53,6 +55,7 @@ var StrToReleaseID = map[string]ReleaseID{
 	"MusicbrainzReleaseGroupID":  MusicbrainzReleaseGroupID,
 	"Rutracker":                  Rutracker,
 	"AccurateRip":                AccurateRip,
+	"Asin":                       Asin,
 }
 
 // MarshalJSON ..
