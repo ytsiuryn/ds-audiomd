@@ -16,5 +16,5 @@ func TestPictTypeMarshalAndUnmarshal(t *testing.T) {
 	data, err = json.Marshal(pt)
 	require.NoError(t, err)
 	require.NoError(t, json.Unmarshal(data, &pt))
-	assert.Equal(t, pt, PictTypeCoverFront)
+	assert.Equal(t, PictTypeCoverFront, pt)
 }

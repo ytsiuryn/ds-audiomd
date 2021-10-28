@@ -29,17 +29,23 @@ func TestDecodeMedia(t *testing.T) {
 }
 
 func TestDiscMediaMarshalAndUnmarshal(t *testing.T) {
+	data, err := json.Marshal(Media(0))
+	require.NoError(t, err)
+	assert.Equal(t, []byte(`""`), data)
 	m := MediaLP
-	data, err := json.Marshal(m)
+	data, err = json.Marshal(m)
 	require.NoError(t, err)
 	require.NoError(t, json.Unmarshal(data, &m))
-	assert.Equal(t, m, MediaLP)
+	assert.Equal(t, MediaLP, m)
 }
 
 func TestDiscFormatCompare(t *testing.T) {
-	df1 := &DiscFormat{Media: MediaLP}
-	df2 := &DiscFormat{Media: MediaLP}
-	assert.Equal(t, df1.Compare(df2), 1.)
+	var df1, df2 *DiscFormat
+	assert.Equal(t, 0., df1.Compare(df2))
+	df1 = &DiscFormat{Media: MediaLP}
+	assert.Equal(t, 0., df1.Compare(df2))
+	df2 = &DiscFormat{Media: MediaLP}
+	assert.Equal(t, 1., df1.Compare(df2))
 }
 
 func TestMediaIDsMarshal(t *testing.T) {

@@ -144,7 +144,7 @@ func (m *Media) UnmarshalJSON(b []byte) error {
 
 // Compare a DiscFormat object with other one.
 func (df *DiscFormat) Compare(other *DiscFormat) float64 {
-	if df.Media == other.Media {
+	if df != nil && other != nil && df.Media == other.Media {
 		return 1.
 	}
 	return 0.

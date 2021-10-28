@@ -143,6 +143,7 @@ func NewTrack() *Track {
 }
 
 // NewFileTrack creates a new Track object for some file.
+// TODO: не охвачен тестом
 func NewFileTrack(pathName string, modTime int64) *Track {
 	track := NewTrack()
 	track.FileInfo = &FileInfo{FileName: pathName, ModTime: modTime}

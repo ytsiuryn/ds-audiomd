@@ -19,6 +19,7 @@ func TestDiscNumberByTrackPos(t *testing.T) {
 		"1":     1,
 		"2.10":  2,
 		"3 - 1": 3,
+		"A.2":   1,
 	}
 	for k, v := range results {
 		if DiscNumberByTrackPos(k) != v {
@@ -28,20 +29,20 @@ func TestDiscNumberByTrackPos(t *testing.T) {
 }
 
 func TestTrackComplexPosition(t *testing.T) {
-	assert.Equal(t, ComplexPosition("1", "1"), "1.1")
+	assert.Equal(t, "1.1", ComplexPosition("1", "1"))
 }
 
 func TestTrackComplexTitle(t *testing.T) {
 	res := ComplexTitle("Sym.5 in C minor, op.67", "1. Allegro con brio")
-	assert.Equal(t, res, "Sym.5 in C minor, op.67. 1. Allegro con brio")
+	assert.Equal(t, "Sym.5 in C minor, op.67. 1. Allegro con brio", res)
 }
 
 func TestTrackAddComment(t *testing.T) {
 	track := NewTrack()
 	track.AddComment("1st comment")
-	assert.Equal(t, track.Notes, "1st comment")
+	assert.Equal(t, "1st comment", track.Notes)
 	track.AddComment("2nd comment")
-	assert.Equal(t, track.Notes, "1st comment\n2nd comment")
+	assert.Equal(t, "1st comment\n2nd comment", track.Notes)
 }
 
 func TestTrackAddUnprocessed(t *testing.T) {
@@ -53,12 +54,12 @@ func TestTrackAddUnprocessed(t *testing.T) {
 func TestTrackSetLyrics(t *testing.T) {
 	track := NewTrack()
 	track.SetLyrics("Bla-bla", false)
-	assert.Equal(t, track.Composition.Lyrics.Text, "Bla-bla")
+	assert.Equal(t, "Bla-bla", track.Composition.Lyrics.Text)
 }
 
 func TestTrackNormalizePosition(t *testing.T) {
-	assert.Equal(t, NormalizePosition("1"), "01")
-	assert.Equal(t, NormalizePosition("01"), "01")
+	assert.Equal(t, "01", NormalizePosition("1"))
+	assert.Equal(t, "01", NormalizePosition("01"))
 }
 
 func TestTrackSetPosition(t *testing.T) {
@@ -66,7 +67,7 @@ func TestTrackSetPosition(t *testing.T) {
 	track.SetPosition("")
 	assert.Empty(t, track.Position)
 	track.SetPosition("1")
-	assert.Equal(t, track.Position, "01")
+	assert.Equal(t, "01", track.Position)
 }
 
 func TestTrackClean(t *testing.T) {
@@ -96,4 +97,11 @@ func TestTrackIDsUnmarshal(t *testing.T) {
 	jsonData = []byte(`{"musicbrainz_track_id": "12345"}`)
 	require.NoError(t, json.Unmarshal(jsonData, &m))
 	assert.Contains(t, m, MusicbrainzTrackID)
+}
+
+func TestLinkWithDisc(t *testing.T) {
+	d := NewDisc(1)
+	tr := NewTrack()
+	tr.LinkWithDisc(d)
+	assert.Equal(t, d.Number, tr.Disc().Number)
 }

@@ -76,6 +76,7 @@ func (m Mood) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON ..
 func (m *Mood) UnmarshalJSON(b []byte) error {
-	*m = StrToMood[string(b)]
+	k := string(b)
+	*m = StrToMood[k[1:len(k)-1]]
 	return nil
 }

@@ -17,7 +17,7 @@ func TestAsumptionOptimize(t *testing.T) {
 	assumption = NewAssumption(release)
 	assumption.Optimize()
 	assert.Empty(t, assumption.Release.Actors)
-	assert.Equal(t, assumption.Actors.First(), "John Doe")
+	assert.Equal(t, "John Doe", assumption.Actors.First())
 
 	release.Pictures = append(
 		release.Pictures,
@@ -28,5 +28,5 @@ func TestAsumptionOptimize(t *testing.T) {
 	assumption.Optimize()
 	assert.Empty(t, assumption.Release.Pictures)
 	require.NotEmpty(t, assumption.Pictures)
-	assert.Equal(t, assumption.Pictures[0].PictType, PictTypeCoverFront)
+	assert.Equal(t, PictTypeCoverFront, assumption.Pictures[0].PictType)
 }
