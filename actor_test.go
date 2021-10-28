@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestActorIDsAdd(t *testing.T) {
@@ -64,16 +65,21 @@ func TestActorRolesFirst(t *testing.T) {
 }
 
 func TestActorIDsMarshal(t *testing.T) {
-	m := ActorIDs{MusicbrainzArtistID: "12345"}
+	m := ActorIDs{0: ""}
 	data, err := json.Marshal(m)
+	require.NoError(t, err)
+	assert.Equal(t, `{"":""}`, string(data))
+	m = ActorIDs{MusicbrainzArtistID: "12345"}
+	data, err = json.Marshal(m)
+	require.NoError(t, err)
 	assert.Equal(t, `{"musicbrainz_artist_id":"12345"}`, string(data))
-	assert.NoError(t, err)
 }
 
 func TestActorIDsUnmarshal(t *testing.T) {
 	m := ActorIDs{}
-	jsonData := []byte(`{"musicbrainz_artist_id": "12345"}`)
-	err := json.Unmarshal(jsonData, &m)
-	assert.NoError(t, err)
+	jsonData := []byte(`{"unknown": 0}`)
+	require.Error(t, json.Unmarshal(jsonData, &m))
+	jsonData = []byte(`{"musicbrainz_artist_id": "12345"}`)
+	require.NoError(t, json.Unmarshal(jsonData, &m))
 	assert.Contains(t, m, MusicbrainzArtistID)
 }

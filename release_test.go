@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestReleaseStubIsEmpty(t *testing.T) {
@@ -145,16 +146,21 @@ func TestReleaseAggregateActors(t *testing.T) {
 }
 
 func TestReleaseIDsMarshal(t *testing.T) {
-	m := ReleaseIDs{MusicbrainzAlbumID: "12345"}
+	m := ReleaseIDs{0: ""}
 	data, err := json.Marshal(m)
+	require.NoError(t, err)
+	assert.Equal(t, `{"":""}`, string(data))
+	m = ReleaseIDs{MusicbrainzAlbumID: "12345"}
+	data, err = json.Marshal(m)
+	require.NoError(t, err)
 	assert.Equal(t, `{"musicbrainz_album_id":"12345"}`, string(data))
-	assert.NoError(t, err)
 }
 
 func TestReleaseIDsUnmarshal(t *testing.T) {
 	m := ReleaseIDs{}
-	jsonData := []byte(`{"musicbrainz_album_id": "12345"}`)
-	err := json.Unmarshal(jsonData, &m)
-	assert.NoError(t, err)
+	jsonData := []byte(`{"unknown": 0}`)
+	require.Error(t, json.Unmarshal(jsonData, &m))
+	jsonData = []byte(`{"musicbrainz_album_id": "12345"}`)
+	require.NoError(t, json.Unmarshal(jsonData, &m))
 	assert.Contains(t, m, MusicbrainzAlbumID)
 }

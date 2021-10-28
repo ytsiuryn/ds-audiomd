@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestDiscNumberByTrackPos(t *testing.T) {
@@ -78,16 +79,21 @@ func TestTrackClean(t *testing.T) {
 }
 
 func TestTrackIDsMarshal(t *testing.T) {
-	m := TrackIDs{MusicbrainzTrackID: "12345"}
+	m := TrackIDs{0: ""}
 	data, err := json.Marshal(m)
+	require.NoError(t, err)
+	assert.Equal(t, `{"":""}`, string(data))
+	m = TrackIDs{MusicbrainzTrackID: "12345"}
+	data, err = json.Marshal(m)
+	require.NoError(t, err)
 	assert.Equal(t, `{"musicbrainz_track_id":"12345"}`, string(data))
-	assert.NoError(t, err)
 }
 
 func TestTrackIDsUnmarshal(t *testing.T) {
 	m := TrackIDs{}
-	jsonData := []byte(`{"musicbrainz_track_id": "12345"}`)
-	err := json.Unmarshal(jsonData, &m)
-	assert.NoError(t, err)
+	jsonData := []byte(`{"unknown": 0}`)
+	assert.Error(t, json.Unmarshal(jsonData, &m))
+	jsonData = []byte(`{"musicbrainz_track_id": "12345"}`)
+	require.NoError(t, json.Unmarshal(jsonData, &m))
 	assert.Contains(t, m, MusicbrainzTrackID)
 }

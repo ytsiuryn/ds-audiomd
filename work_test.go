@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestWorkIsEmptyAndClean(t *testing.T) {
@@ -16,16 +17,21 @@ func TestWorkIsEmptyAndClean(t *testing.T) {
 }
 
 func TestWorkIDsMarshal(t *testing.T) {
-	m := WorkIDs{MusicbrainzWorkID: "12345"}
+	m := WorkIDs{0: ""}
 	data, err := json.Marshal(m)
+	require.NoError(t, err)
+	assert.Equal(t, `{"":""}`, string(data))
+	m = WorkIDs{MusicbrainzWorkID: "12345"}
+	data, err = json.Marshal(m)
+	require.NoError(t, err)
 	assert.Equal(t, `{"musicbrainz_work_id":"12345"}`, string(data))
-	assert.NoError(t, err)
 }
 
 func TestWorkIDsUnmarshal(t *testing.T) {
 	m := WorkIDs{}
-	jsonData := []byte(`{"musicbrainz_work_id": "12345"}`)
-	err := json.Unmarshal(jsonData, &m)
-	assert.NoError(t, err)
+	jsonData := []byte(`{"unknown": 0}`)
+	assert.Error(t, json.Unmarshal(jsonData, &m))
+	jsonData = []byte(`{"musicbrainz_work_id": "12345"}`)
+	require.NoError(t, json.Unmarshal(jsonData, &m))
 	assert.Contains(t, m, MusicbrainzWorkID)
 }

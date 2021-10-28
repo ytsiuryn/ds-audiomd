@@ -85,6 +85,15 @@ func (lbl *LabelIDs) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+// MarshalJSON преобразует словарь идентификаторов лейбла к JSON формату.
+func (pids PubIDs) MarshalJSON() ([]byte, error) {
+	x := make(map[string]string, len(pids))
+	for k, v := range pids {
+		x[k.String()] = v
+	}
+	return json.Marshal(x)
+}
+
 // UnmarshalJSON получает словарь идентификаторов издателя из значения JSON.
 func (pids *PubIDs) UnmarshalJSON(b []byte) error {
 	x := make(map[string]string)

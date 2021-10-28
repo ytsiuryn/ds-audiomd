@@ -5,13 +5,17 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestReleaseStatusMarshalAndUnmarshal(t *testing.T) {
+	data, err := json.Marshal(ReleaseStatus(0))
+	require.NoError(t, err)
+	assert.Equal(t, []byte(`""`), data)
 	rs := ReleaseStatusOfficial
-	data, err := json.Marshal(rs)
-	assert.NoError(t, err)
-	assert.NoError(t, json.Unmarshal(data, &rs))
+	data, err = json.Marshal(rs)
+	require.NoError(t, err)
+	require.NoError(t, json.Unmarshal(data, &rs))
 	assert.Equal(t, rs, ReleaseStatusOfficial)
 }
 
@@ -30,10 +34,13 @@ func TestReleaseStatusDecodeSlice(t *testing.T) {
 }
 
 func TestReleaseTypeMarshalAndUnmarshal(t *testing.T) {
+	data, err := json.Marshal(ReleaseType(0))
+	require.NoError(t, err)
+	assert.Equal(t, []byte(`""`), data)
 	rt := ReleaseTypeAlbum
-	data, err := json.Marshal(rt)
-	assert.NoError(t, err)
-	assert.NoError(t, json.Unmarshal(data, &rt))
+	data, err = json.Marshal(rt)
+	require.NoError(t, err)
+	require.NoError(t, json.Unmarshal(data, &rt))
 	assert.Equal(t, rt, ReleaseTypeAlbum)
 }
 
@@ -44,10 +51,13 @@ func TestReleaseTypeDecodeSlice(t *testing.T) {
 }
 
 func TestReleaseRepeatMarshalAndUnmarshal(t *testing.T) {
+	data, err := json.Marshal(ReleaseRepeat(0))
+	require.NoError(t, err)
+	assert.Equal(t, []byte(`""`), data)
 	rr := ReleaseRepeatRemake
-	data, err := json.Marshal(rr)
-	assert.NoError(t, err)
-	assert.NoError(t, json.Unmarshal(data, &rr))
+	data, err = json.Marshal(rr)
+	require.NoError(t, err)
+	require.NoError(t, json.Unmarshal(data, &rr))
 	assert.Equal(t, rr, ReleaseRepeatRemake)
 }
 
@@ -58,10 +68,13 @@ func TestReleaseRepeatDecodeSlice(t *testing.T) {
 }
 
 func TestReleaseRemakeMarshalAndUnmarshal(t *testing.T) {
+	data, err := json.Marshal(ReleaseRemake(0))
+	require.NoError(t, err)
+	assert.Equal(t, []byte(`""`), data)
 	rr := ReleaseRemakeRemastered
-	data, err := json.Marshal(rr)
-	assert.NoError(t, err)
-	assert.NoError(t, json.Unmarshal(data, &rr))
+	data, err = json.Marshal(rr)
+	require.NoError(t, err)
+	require.NoError(t, json.Unmarshal(data, &rr))
 	assert.Equal(t, rr, ReleaseRemakeRemastered)
 }
 
@@ -72,10 +85,13 @@ func TestReleaseRemakeDecodeSlice(t *testing.T) {
 }
 
 func TestReleaseOriginMarshalAndUnmarshal(t *testing.T) {
+	data, err := json.Marshal(ReleaseOrigin(0))
+	require.NoError(t, err)
+	assert.Equal(t, []byte(`""`), data)
 	ro := ReleaseOriginStudio
-	data, err := json.Marshal(ro)
-	assert.NoError(t, err)
-	assert.NoError(t, json.Unmarshal(data, &ro))
+	data, err = json.Marshal(ro)
+	require.NoError(t, err)
+	require.NoError(t, json.Unmarshal(data, &ro))
 	assert.Equal(t, ro, ReleaseOriginStudio)
 }
 

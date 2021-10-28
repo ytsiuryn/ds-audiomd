@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestDecodeMedia(t *testing.T) {
@@ -30,8 +31,8 @@ func TestDecodeMedia(t *testing.T) {
 func TestDiscMediaMarshalAndUnmarshal(t *testing.T) {
 	m := MediaLP
 	data, err := json.Marshal(m)
-	assert.NoError(t, err)
-	assert.NoError(t, json.Unmarshal(data, &m))
+	require.NoError(t, err)
+	require.NoError(t, json.Unmarshal(data, &m))
 	assert.Equal(t, m, MediaLP)
 }
 
@@ -42,17 +43,22 @@ func TestDiscFormatCompare(t *testing.T) {
 }
 
 func TestMediaIDsMarshal(t *testing.T) {
-	m := MediaIDs{DiscID: "12345"}
+	m := MediaIDs{0: ""}
 	data, err := json.Marshal(m)
+	require.NoError(t, err)
+	assert.Equal(t, `{"":""}`, string(data))
+	m = MediaIDs{DiscID: "12345"}
+	data, err = json.Marshal(m)
+	require.NoError(t, err)
 	assert.Equal(t, `{"disc_id":"12345"}`, string(data))
-	assert.NoError(t, err)
 }
 
 func TestMediaIDsUnmarshal(t *testing.T) {
 	m := MediaIDs{}
-	jsonData := []byte(`{"disc_id": "12345"}`)
-	err := json.Unmarshal(jsonData, &m)
-	assert.NoError(t, err)
+	jsonData := []byte(`{"unknown": 0}`)
+	assert.Error(t, json.Unmarshal(jsonData, &m))
+	jsonData = []byte(`{"disc_id": "12345"}`)
+	require.NoError(t, json.Unmarshal(jsonData, &m))
 	assert.Contains(t, m, DiscID)
 }
 

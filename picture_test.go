@@ -8,9 +8,12 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestPictTypeUnmarshal(t *testing.T) {
+func TestPictTypeMarshalAndUnmarshal(t *testing.T) {
+	data, err := json.Marshal(PictType(0))
+	require.NoError(t, err)
+	assert.Equal(t, []byte(`""`), data)
 	pt := PictTypeCoverFront
-	data, err := json.Marshal(pt)
+	data, err = json.Marshal(pt)
 	require.NoError(t, err)
 	require.NoError(t, json.Unmarshal(data, &pt))
 	assert.Equal(t, pt, PictTypeCoverFront)

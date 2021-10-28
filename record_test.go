@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestAlbumPerformers(t *testing.T) {
@@ -24,16 +25,22 @@ func TestRecordingIsEmptyAndClean(t *testing.T) {
 }
 
 func TestRecordingIDsMarshal(t *testing.T) {
-	m := RecordingIDs{ISRC: "12345"}
+	m := RecordingIDs{0: ""}
 	data, err := json.Marshal(m)
+	require.NoError(t, err)
+	assert.Equal(t, `{"":""}`, string(data))
+	m = RecordingIDs{ISRC: "12345"}
+	data, err = json.Marshal(m)
+	require.NoError(t, err)
 	assert.Equal(t, `{"isrc":"12345"}`, string(data))
-	assert.NoError(t, err)
 }
 
 func TestRecordingIDsUnmarshal(t *testing.T) {
 	m := RecordingIDs{}
-	jsonData := []byte(`{"isrc": "12345"}`)
+	jsonData := []byte(`{"unknown": 0}`)
+	assert.Error(t, json.Unmarshal(jsonData, &m))
+	jsonData = []byte(`{"isrc": "12345"}`)
 	err := json.Unmarshal(jsonData, &m)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Contains(t, m, ISRC)
 }
