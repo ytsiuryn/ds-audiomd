@@ -8,38 +8,51 @@ import (
 // RecordingID тип для перечисления идентификаторов записи трека во внешних БД.
 type RecordingID uint8
 
-// Допустимые значения идентификаторов релиза во внешних БД.
+// Допустимые значения идентификаторов записи во внешних БД.
 const (
 	MusicbrainzRecordingID RecordingID = iota + 1
 	ISRC
 )
 
+// RecordingIDs представляет словарь идентификаторов записи во внешних БД.
+type RecordingIDs map[RecordingID]string
+
+// MarshalJSON преобразует словарь идентификаторов записи к JSON формату.
+func (rids RecordingIDs) MarshalJSON() ([]byte, error) {
+	x := make(map[string]string, len(rids))
+	for k, v := range rids {
+		x[k.String()] = v
+	}
+	return json.Marshal(x)
+}
+
+// UnmarshalJSON получает словарь идентификаторов записи из значения JSON.
+func (rids *RecordingIDs) UnmarshalJSON(b []byte) error {
+	x := make(map[string]string)
+	if err := json.Unmarshal(b, &x); err != nil {
+		return err
+	}
+	*rids = make(RecordingIDs, len(x))
+	for k, v := range x {
+		(*rids)[StrToRecordingID[k]] = v
+	}
+	return nil
+}
+
 // StrToRecordingID ..
 var StrToRecordingID = map[string]RecordingID{
-	"MusicbrainzRecordingID": MusicbrainzRecordingID,
-	"ISRC":                   ISRC,
+	"musicbrainz_recording_id": MusicbrainzRecordingID,
+	"isrc":                     ISRC,
 }
 
 func (rid RecordingID) String() string {
 	switch rid {
 	case MusicbrainzRecordingID:
-		return "MusicbrainzRecordingID"
+		return "musicbrainz_recording_id"
 	case ISRC:
-		return "ISRC"
+		return "isrc"
 	}
 	return ""
-}
-
-// MarshalJSON ..
-func (rid RecordingID) MarshalJSON() ([]byte, error) {
-	return json.Marshal(rid.String())
-}
-
-// UnmarshalJSON получает тип RecordingID из значения JSON.
-func (rid *RecordingID) UnmarshalJSON(b []byte) error {
-	k := string(b)
-	*rid = StrToRecordingID[k[1:len(k)-1]]
-	return nil
 }
 
 // RecordSession описывает общие свойства сессии записи.
@@ -52,7 +65,7 @@ type RecordSession struct {
 // Record содержит сведения о записи композиции.
 type Record struct {
 	Duration   int32                  `json:"duration,omitempty"`
-	Actors     ActorIDs               `json:"actors,omitempty"`
+	Actors     ActorsIDs              `json:"actors,omitempty"`
 	ActorRoles ActorRoles             `json:"actor_roles,omitempty"`
 	Moods      Moods                  `json:"moods,omitempty"`
 	Genres     []string               `json:"genres,omitempty"`
@@ -63,7 +76,7 @@ type Record struct {
 // NewRecord создает новый объект Record.
 func NewRecord() *Record {
 	return &Record{
-		Actors:     ActorIDs{},
+		Actors:     ActorsIDs{},
 		ActorRoles: ActorRoles{},
 		IDs:        map[RecordingID]string{},
 	}

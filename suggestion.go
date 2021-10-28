@@ -25,7 +25,7 @@ type Suggestion struct {
 // выноса сведений об акторах в отдельную сущность.
 type SuggestionSet struct {
 	Suggestions []*Suggestion `json:"suggestions"`
-	Actors      ActorIDs      `json:"actors,omitempty"`
+	Actors      ActorsIDs     `json:"actors,omitempty"`
 }
 
 // NewSuggestion ..
@@ -37,7 +37,7 @@ func NewSuggestion() *Suggestion {
 func NewSuggestionSet() *SuggestionSet {
 	return &SuggestionSet{
 		Suggestions: []*Suggestion{},
-		Actors:      ActorIDs{}}
+		Actors:      ActorsIDs{}}
 }
 
 // Optimize оптимизирует релиз-данные для каждого результата и аггрегирует коды

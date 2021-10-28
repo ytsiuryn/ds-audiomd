@@ -24,29 +24,42 @@ const (
 
 // StrToTrackID ..
 var StrToTrackID = map[string]TrackID{
-	"MusicbrainzReleaseTrackID": MusicbrainzReleaseTrackID,
-	"MusicbrainzTrackID":        MusicbrainzTrackID,
+	"musicbrainz_release_track_id": MusicbrainzReleaseTrackID,
+	"musicbrainz_track_id":         MusicbrainzTrackID,
 }
 
 func (tid TrackID) String() string {
 	switch tid {
 	case MusicbrainzReleaseTrackID:
-		return "MusicbrainzReleaseTrackID"
+		return "musicbrainz_release_track_id"
 	case MusicbrainzTrackID:
-		return "MusicbrainzTrackID"
+		return "musicbrainz_track_id"
 	}
 	return ""
 }
 
-// MarshalJSON ..
-func (tid TrackID) MarshalJSON() ([]byte, error) {
-	return json.Marshal(tid.String())
+// TrackIDs представляет словарь идентификаторов трека во внешних БД.
+type TrackIDs map[TrackID]string
+
+// MarshalJSON преобразует словарь идентификаторов трека к JSON формату.
+func (tids TrackIDs) MarshalJSON() ([]byte, error) {
+	x := make(map[string]string, len(tids))
+	for k, v := range tids {
+		x[k.String()] = v
+	}
+	return json.Marshal(x)
 }
 
-// UnmarshalJSON получает тип TrackID из значения JSON.
-func (tid *TrackID) UnmarshalJSON(b []byte) error {
-	k := string(b)
-	*tid = StrToTrackID[k[1:len(k)-1]]
+// UnmarshalJSON получает словарь идентификаторов трека из значения JSON.
+func (tids *TrackIDs) UnmarshalJSON(b []byte) error {
+	x := make(map[string]string)
+	if err := json.Unmarshal(b, &x); err != nil {
+		return err
+	}
+	*tids = make(TrackIDs, len(x))
+	for k, v := range x {
+		(*tids)[StrToTrackID[k]] = v
+	}
 	return nil
 }
 
@@ -74,7 +87,7 @@ type Track struct {
 	Title       string            `json:"title,omitempty"`
 	Notes       string            `json:"notes,omitempty"`
 	Duration    intutils.Duration `json:"duration,omitempty"` // TODO: aggregate release track Actors?
-	Actors      ActorIDs          `json:"actors,omitempty"`
+	Actors      ActorsIDs         `json:"actors,omitempty"`
 	ActorRoles  ActorRoles        `json:"actor_roles,omitempty"`
 	IDs         collection.StrMap `json:"ids,omitempty"`
 	Unprocessed collection.StrMap `json:"unprocessed,omitempty"`
@@ -120,7 +133,7 @@ func NewTrack() *Track {
 	return &Track{
 		Record:      NewRecord(),
 		Composition: NewWork(),
-		Actors:      ActorIDs{},
+		Actors:      ActorsIDs{},
 		ActorRoles:  ActorRoles{},
 		IDs:         make(map[string]string),
 		Unprocessed: make(map[string]string),
@@ -164,11 +177,7 @@ func (track *Track) SetLyrics(text string, isSynchronized bool) {
 
 // SetLyricsLanguage устанавливает язык текста трека.
 func (track *Track) SetLyricsLanguage(lang string) {
-	if track.Composition.Lyrics == nil {
-		track.Composition.Lyrics = new(Lyrics)
-	} else {
-		track.Composition.Lyrics.Language = world.LanguageFromString(lang)
-	}
+	track.Composition.Lyrics.Language = world.LanguageFromString(lang)
 }
 
 // SetMood is the setter for 'mood' struture field.

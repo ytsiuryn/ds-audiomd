@@ -9,21 +9,23 @@ import (
 // PublishingID тип для перечисления идентификаторов публикации во внешних БД.
 type PublishingID uint8
 
+// PubIDs представляет словарь идентификаторов издателя во внешних БД.
+type PubIDs map[PublishingID]string
+
 // Допустимые значения идентификаторов публикации во внешних БД.
 const (
 	// он же UPC?
-	Barcode PublishingID = iota + 1
+	PublishingBarcode PublishingID = iota + 1
 )
 
 // StrToPublishingID ..
 var StrToPublishingID = map[string]PublishingID{
-	"Barcode": Barcode,
+	"barcode": PublishingBarcode,
 }
 
 func (pid PublishingID) String() string {
-	switch pid {
-	case Barcode:
-		return "Barcode"
+	if pid == PublishingBarcode {
+		return "barcode"
 	}
 	return ""
 }
@@ -31,13 +33,6 @@ func (pid PublishingID) String() string {
 // MarshalJSON ..
 func (pid PublishingID) MarshalJSON() ([]byte, error) {
 	return json.Marshal(pid.String())
-}
-
-// UnmarshalJSON получает тип PublishingID из значения JSON.
-func (pid *PublishingID) UnmarshalJSON(b []byte) error {
-	k := string(b)
-	*pid = StrToPublishingID[k[1:len(k)-1]]
-	return nil
 }
 
 // LabelID тип для перечисления идентификаторов торговых лейблов издателей во внешних БД.
@@ -51,29 +46,55 @@ const (
 
 // StrToLabelID ..
 var StrToLabelID = map[string]LabelID{
-	"DiscogsLabelID":     DiscogsLabelID,
-	"MusicbrainzLabelID": MusicbrainzLabelID,
+	"discogs_label_id":     DiscogsLabelID,
+	"musicbrainz_label_id": MusicbrainzLabelID,
 }
 
 func (lid LabelID) String() string {
 	switch lid {
 	case DiscogsLabelID:
-		return "DiscogsLabelID"
+		return "discogs_label_id"
 	case MusicbrainzLabelID:
-		return "MusicbrainzLabelID"
+		return "musicbrainz_label_id"
 	}
 	return ""
 }
 
-// MarshalJSON преобразует значение типа идентификатора лейбла к JSON формату.
-func (lid LabelID) MarshalJSON() ([]byte, error) {
-	return json.Marshal(lid.String())
+// LabelIDs представляет словарь идентификаторов лейблов во внешних БД.
+type LabelIDs map[LabelID]string
+
+// MarshalJSON преобразует словарь идентификаторов лейбла к JSON формату.
+func (lbl LabelIDs) MarshalJSON() ([]byte, error) {
+	x := make(map[string]string, len(lbl))
+	for k, v := range lbl {
+		x[k.String()] = v
+	}
+	return json.Marshal(x)
 }
 
-// UnmarshalJSON получает тип идентификатора лейбла из значения JSON.
-func (lid *LabelID) UnmarshalJSON(b []byte) error {
-	k := string(b)
-	*lid = StrToLabelID[k[1:len(k)-1]]
+// UnmarshalJSON получает словарь идентификаторов лейбла из значения JSON.
+func (lbl *LabelIDs) UnmarshalJSON(b []byte) error {
+	x := make(map[string]string)
+	if err := json.Unmarshal(b, &x); err != nil {
+		return err
+	}
+	*lbl = make(LabelIDs, len(x))
+	for k, v := range x {
+		(*lbl)[StrToLabelID[k]] = v
+	}
+	return nil
+}
+
+// UnmarshalJSON получает словарь идентификаторов издателя из значения JSON.
+func (pids *PubIDs) UnmarshalJSON(b []byte) error {
+	x := make(map[string]string)
+	if err := json.Unmarshal(b, &x); err != nil {
+		return err
+	}
+	*pids = make(PubIDs, len(x))
+	for k, v := range x {
+		(*pids)[StrToPublishingID[k]] = v
+	}
 	return nil
 }
 
@@ -89,9 +110,10 @@ func NewLabel(lbl, catno string) *Label {
 	return &Label{Label: lbl, Catno: catno, IDs: map[LabelID]string{}}
 }
 
-// Compare сравнивает 2 лейбла по номеру в каталоге.
+// Compare сравнивает 2 лейбла наименованию самого лейбла и по номеру в каталоге.
 func (lbl *Label) Compare(other *Label) float64 {
-	return stringutils.JaroWinklerDistance(lbl.Catno, other.Catno)
+	return stringutils.JaroWinklerDistance(lbl.Label, other.Label) *
+		stringutils.JaroWinklerDistance(lbl.Catno, other.Catno)
 }
 
 // Publishing describes trade label of the release.
@@ -105,6 +127,11 @@ func NewPublishing() *Publishing {
 	return &Publishing{IDs: map[PublishingID]string{}}
 }
 
+// AddLabel добавляет лейбл в данные об издании.
+func (pub *Publishing) AddLabel(lbl *Label) {
+	pub.Labels = append(pub.Labels, lbl)
+}
+
 // Compare a ReleaseLabel object with other one.
 func (pub *Publishing) Compare(other *Publishing) float64 {
 	var res, max float64
@@ -116,8 +143,9 @@ func (pub *Publishing) Compare(other *Publishing) float64 {
 			}
 		}
 	}
-	if pub.IDs[Barcode] != "" && other.IDs[Barcode] != "" {
-		max *= stringutils.JaroWinklerDistance(pub.IDs[Barcode], other.IDs[Barcode])
+	if pub.IDs[PublishingBarcode] != "" && other.IDs[PublishingBarcode] != "" {
+		max *= stringutils.JaroWinklerDistance(
+			pub.IDs[PublishingBarcode], other.IDs[PublishingBarcode])
 	}
 	return max
 }

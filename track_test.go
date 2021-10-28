@@ -1,6 +1,7 @@
 package metadata
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -74,4 +75,19 @@ func TestTrackClean(t *testing.T) {
 		tr.IDs != nil || tr.Unprocessed != nil || tr.AudioInfo != nil || tr.FileInfo != nil {
 		t.Fail()
 	}
+}
+
+func TestTrackIDsMarshal(t *testing.T) {
+	m := TrackIDs{MusicbrainzTrackID: "12345"}
+	data, err := json.Marshal(m)
+	assert.Equal(t, `{"musicbrainz_track_id":"12345"}`, string(data))
+	assert.NoError(t, err)
+}
+
+func TestTrackIDsUnmarshal(t *testing.T) {
+	m := TrackIDs{}
+	jsonData := []byte(`{"musicbrainz_track_id": "12345"}`)
+	err := json.Unmarshal(jsonData, &m)
+	assert.NoError(t, err)
+	assert.Contains(t, m, MusicbrainzTrackID)
 }

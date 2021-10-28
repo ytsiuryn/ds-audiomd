@@ -1,6 +1,7 @@
 package metadata
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -50,16 +51,14 @@ func TestReleasePerformersCompare(t *testing.T) {
 
 func TestReleasePubCompare(t *testing.T) {
 	r := NewRelease()
-	r.Publishing.Labels = append(r.Publishing.Labels, NewLabel("Analog Audio", ""))
+	r.Publishing.AddLabel(NewLabel("Analog Audio", ""))
 	r2 := NewRelease()
-	if res, weight := r.pubCompare(r2); res != 0. || weight != 0. {
-		t.Fail()
-	}
-	r2.Publishing.Labels = append(r2.Publishing.Labels, NewLabel("RCA", ""))
-	r2.Publishing.Labels = append(r2.Publishing.Labels, NewLabel("Analog Audio", ""))
-	if res, weight := r.pubCompare(r2); res != .99 || weight != 1. {
-		t.Fail()
-	}
+	res, weight := r.pubCompare(r2)
+	assert.True(t, res == 0. && weight == 0.)
+	r2.Publishing.AddLabel(NewLabel("RCA", ""))
+	r2.Publishing.AddLabel(NewLabel("Analog Audio", ""))
+	res, weight = r.pubCompare(r2)
+	assert.True(t, res == 0. && weight == 1.)
 }
 
 func TestReleaseTracksCompare(t *testing.T) {
@@ -143,4 +142,19 @@ func TestReleaseAggregateActors(t *testing.T) {
 	if len(r.Actors) != 1 || len(t1.Actors) != 0 || len(t2.Actors) != 0 {
 		t.Fail()
 	}
+}
+
+func TestReleaseIDsMarshal(t *testing.T) {
+	m := ReleaseIDs{MusicbrainzAlbumID: "12345"}
+	data, err := json.Marshal(m)
+	assert.Equal(t, `{"musicbrainz_album_id":"12345"}`, string(data))
+	assert.NoError(t, err)
+}
+
+func TestReleaseIDsUnmarshal(t *testing.T) {
+	m := ReleaseIDs{}
+	jsonData := []byte(`{"musicbrainz_album_id": "12345"}`)
+	err := json.Unmarshal(jsonData, &m)
+	assert.NoError(t, err)
+	assert.Contains(t, m, MusicbrainzAlbumID)
 }

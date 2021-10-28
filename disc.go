@@ -28,17 +28,42 @@ const (
 	DiscID MediaID = iota + 1
 )
 
-func (did MediaID) String() string {
-	switch did {
+// StrToMediaID ..
+var StrToMediaID = map[string]MediaID{
+	"disc_id": DiscID,
+}
+
+func (mid MediaID) String() string {
+	switch mid {
 	case DiscID:
-		return "DiscID"
+		return "disc_id"
 	}
 	return ""
 }
 
-// MarshalJSON ..
-func (did MediaID) MarshalJSON() ([]byte, error) {
-	return json.Marshal(did.String())
+// MediaIDs представляет словарь идентификаторов медиа-дисков релиза во внешних БД.
+type MediaIDs map[MediaID]string
+
+// MarshalJSON преобразует словарь идентификаторов диска к JSON формату.
+func (mids MediaIDs) MarshalJSON() ([]byte, error) {
+	x := make(map[string]string, len(mids))
+	for k, v := range mids {
+		x[k.String()] = v
+	}
+	return json.Marshal(x)
+}
+
+// UnmarshalJSON получает словарь идентификаторов диска из значения JSON.
+func (mids *MediaIDs) UnmarshalJSON(b []byte) error {
+	x := make(map[string]string)
+	if err := json.Unmarshal(b, &x); err != nil {
+		return err
+	}
+	*mids = make(MediaIDs, len(x))
+	for k, v := range x {
+		(*mids)[StrToMediaID[k]] = v
+	}
+	return nil
 }
 
 // StrToMedia ..
@@ -127,7 +152,7 @@ func (df *DiscFormat) Compare(other *DiscFormat) float64 {
 
 // IsEmpty проверяет объект на пустоту.
 func (df *DiscFormat) IsEmpty() bool {
-	return reflect.DeepEqual(DiscFormat{}, *df)
+	return df == nil || reflect.DeepEqual(DiscFormat{}, *df)
 }
 
 // Clean сбрасывает поля структуры в nil, если поля структуры не отличаются от нулевых значений.

@@ -27,46 +27,59 @@ const (
 func (rid ReleaseID) String() string {
 	switch rid {
 	case DiscogsReleaseID:
-		return "DiscogsReleaseID"
+		return "discogs_release_id"
 	case DiscogsMasterID:
-		return "DiscogsMasterID"
+		return "discogs_master_id"
 	case MusicbrainzAlbumID:
-		return "MusicbrainzAlbumID"
+		return "musicbrainz_album_id"
 	case MusicbrainzOriginalAlbumID:
-		return "MusicbrainzOriginalAlbumID"
+		return "musicbrainz_original_album_id"
 	case MusicbrainzReleaseGroupID:
-		return "MusicbrainzReleaseGroupID"
+		return "musicbrainz_release_group_id"
 	case Rutracker:
-		return "Rutracker"
+		return "rutracker"
 	case AccurateRip:
-		return "AccurateRip"
+		return "accurate_rip"
 	case Asin:
-		return "Asin"
+		return "asin"
 	}
 	return ""
 }
 
 // StrToReleaseID ..
 var StrToReleaseID = map[string]ReleaseID{
-	"DiscogsReleaseID":           DiscogsReleaseID,
-	"DiscogsMasterID":            DiscogsMasterID,
-	"MusicbrainzAlbumID":         MusicbrainzAlbumID,
-	"MusicbrainzOriginalAlbumID": MusicbrainzOriginalAlbumID,
-	"MusicbrainzReleaseGroupID":  MusicbrainzReleaseGroupID,
-	"Rutracker":                  Rutracker,
-	"AccurateRip":                AccurateRip,
-	"Asin":                       Asin,
+	"discogs_release_id":            DiscogsReleaseID,
+	"discogs_master_id":             DiscogsMasterID,
+	"musicbrainz_album_id":          MusicbrainzAlbumID,
+	"musicbrainz_original_album_id": MusicbrainzOriginalAlbumID,
+	"musicbrainz_release_group_id":  MusicbrainzReleaseGroupID,
+	"rutracker":                     Rutracker,
+	"accurate_rip":                  AccurateRip,
+	"asin":                          Asin,
 }
 
-// MarshalJSON ..
-func (rid ReleaseID) MarshalJSON() ([]byte, error) {
-	return json.Marshal(rid.String())
+// ReleaseIDs представляет словарь идентификаторов релиза во внешних БД.
+type ReleaseIDs map[ReleaseID]string
+
+// MarshalJSON преобразует словарь идентификаторов релиза к JSON формату.
+func (rids ReleaseIDs) MarshalJSON() ([]byte, error) {
+	x := make(map[string]string, len(rids))
+	for k, v := range rids {
+		x[k.String()] = v
+	}
+	return json.Marshal(x)
 }
 
-// UnmarshalJSON получает тип ReleaseID из значения JSON.
-func (rid *ReleaseID) UnmarshalJSON(b []byte) error {
-	k := string(b)
-	*rid = StrToReleaseID[k[1:len(k)-1]]
+// UnmarshalJSON получает словарь идентификаторов релиза из значения JSON.
+func (rids *ReleaseIDs) UnmarshalJSON(b []byte) error {
+	x := make(map[string]string)
+	if err := json.Unmarshal(b, &x); err != nil {
+		return err
+	}
+	*rids = make(ReleaseIDs, len(x))
+	for k, v := range x {
+		(*rids)[StrToReleaseID[k]] = v
+	}
 	return nil
 }
 
@@ -92,7 +105,7 @@ type ReleaseStub struct {
 	ReleaseRepeat `json:"release_repeat,omitempty"`
 	ReleaseRemake `json:"release_remake,omitempty"`
 	ReleaseOrigin `json:"release_origin,omitempty"`
-	Actors        ActorIDs             `json:"actors,omitempty"`
+	Actors        ActorsIDs            `json:"actors,omitempty"`
 	ActorRoles    ActorRoles           `json:"actors_roles,omitempty"`
 	IDs           map[ReleaseID]string `json:"ids,omitempty"`
 	Pictures      []*PictureInAudio    `json:"pictures,omitempty"`
@@ -111,7 +124,7 @@ func NewRelease() *Release {
 // NewReleaseStub construct a new release object.
 func NewReleaseStub() *ReleaseStub {
 	return &ReleaseStub{
-		Actors:      ActorIDs{},
+		Actors:      ActorsIDs{},
 		ActorRoles:  ActorRoles{},
 		Publishing:  NewPublishing(),
 		IDs:         map[ReleaseID]string{},

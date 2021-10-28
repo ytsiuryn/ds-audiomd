@@ -13,7 +13,7 @@ type Lyrics struct {
 
 // NewLyrics создает новый объект Lyrics.
 func NewLyrics() *Lyrics {
-	return &Lyrics{}
+	return new(Lyrics)
 }
 
 // IsEmpty проверяет структуру на пустоту.

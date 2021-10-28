@@ -4,14 +4,14 @@ package metadata
 type Assumption struct {
 	Release  *Release          `json:"release"`
 	Pictures []*PictureInAudio `json:"pictures,omitempty"`
-	Actors   ActorIDs          `json:"actors,omitempty"`
+	Actors   ActorsIDs         `json:"actors,omitempty"`
 }
 
 // NewAssumption создает объект типа Assumption и возвращает ссылку на него.
 // Если входной объект равен nil, поле Release будет инициализироваться.
 func NewAssumption(release *Release) *Assumption {
 	assumption := Assumption{
-		Actors:   ActorIDs{},
+		Actors:   ActorsIDs{},
 		Pictures: []*PictureInAudio{},
 	}
 	if release == nil {

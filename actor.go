@@ -26,40 +26,53 @@ const (
 
 // StrToActorID ..
 var StrToActorID = map[string]ActorID{
-	"DiscogsArtistID":             DiscogsArtistID,
-	"MusicbrainzAlbumArtistID":    MusicbrainzAlbumArtistID,
-	"MusicbrainzArtistID":         MusicbrainzArtistID,
-	"MusicbrainzOriginalArtistID": MusicbrainzOriginalArtistID,
+	"discogs_artist_id":              DiscogsArtistID,
+	"musicbrainz_album_artist_id":    MusicbrainzAlbumArtistID,
+	"musicbrainz_artist_id":          MusicbrainzArtistID,
+	"musicbrainz_original_artist_id": MusicbrainzOriginalArtistID,
 }
 
 func (aid ActorID) String() string {
 	switch aid {
 	case DiscogsArtistID:
-		return "DiscogsArtistID"
+		return "discogs_artist_id"
 	case MusicbrainzAlbumArtistID:
-		return "MusicbrainzAlbumArtistID"
+		return "musicbrainz_album_artist_id"
 	case MusicbrainzArtistID:
-		return "MusicbrainzArtistID"
+		return "musicbrainz_artist_id"
 	case MusicbrainzOriginalArtistID:
-		return "MusicbrainzOriginalArtistID"
+		return "musicbrainz_original_artist_id"
 	}
 	return ""
 }
 
-// MarshalJSON ..
-func (aid ActorID) MarshalJSON() ([]byte, error) {
-	return json.Marshal(aid.String())
+// ActorIDs представляет словарь идентификаторов акторов во внешних БД.
+type ActorIDs map[ActorID]string
+
+// MarshalJSON преобразует словарь идентификаторов идентификатора актора к JSON формату.
+func (aid ActorIDs) MarshalJSON() ([]byte, error) {
+	x := make(map[string]string, len(aid))
+	for k, v := range aid {
+		x[k.String()] = v
+	}
+	return json.Marshal(x)
 }
 
-// UnmarshalJSON получает тип ActorID из значения JSON.
-func (aid *ActorID) UnmarshalJSON(b []byte) error {
-	k := string(b)
-	*aid = StrToActorID[k[1:len(k)-1]]
+// UnmarshalJSON получает словарь идентификаторов актора из значения JSON.
+func (aid *ActorIDs) UnmarshalJSON(b []byte) error {
+	x := make(map[string]string)
+	if err := json.Unmarshal(b, &x); err != nil {
+		return err
+	}
+	*aid = make(ActorIDs, len(x))
+	for k, v := range x {
+		(*aid)[StrToActorID[k]] = v
+	}
 	return nil
 }
 
-// ActorIDs хранит ссылки на их коды во внешних БД.
-type ActorIDs map[ActorName]map[ActorID]string
+// ActorsIDs хранит ссылки на их коды во внешних БД.
+type ActorsIDs map[ActorName]ActorIDs
 
 // ActorRoles хранит перечень ролей акторов для определенного контекста (релиза, трека,
 // композиции, записи и т.д.).
@@ -71,7 +84,7 @@ func IsPerformer(name ActorName, roles []ActorRole) bool {
 }
 
 // Add добавляет сведеления об акторе и его коде во некоторой внешней БД, если необходимо.
-func (ai ActorIDs) Add(name ActorName, key ActorID, val string) {
+func (ai ActorsIDs) Add(name ActorName, key ActorID, val string) {
 	ids, ok := ai[name]
 	if !ok {
 		ai[name] = map[ActorID]string{key: val}
@@ -83,7 +96,7 @@ func (ai ActorIDs) Add(name ActorName, key ActorID, val string) {
 }
 
 // Merge объединяет данные в целевой исходный объект.
-func (ai ActorIDs) Merge(other ActorIDs) {
+func (ai ActorsIDs) Merge(other ActorsIDs) {
 	for actor, ids := range other {
 		for k, v := range ids {
 			ai[actor][k] = v
@@ -92,12 +105,12 @@ func (ai ActorIDs) Merge(other ActorIDs) {
 }
 
 // IsEmpty проверяет коллекцию на пустоту.
-func (ai ActorIDs) IsEmpty() bool {
+func (ai ActorsIDs) IsEmpty() bool {
 	return len(ai) == 0
 }
 
 // First возвращает первое попавшееся имя актора.
-func (ai ActorIDs) First() string {
+func (ai ActorsIDs) First() string {
 	for actorName := range ai {
 		return string(actorName)
 	}
@@ -105,7 +118,7 @@ func (ai ActorIDs) First() string {
 }
 
 // Clean сбрасывает всю коллекцию в nil, если поля структуры не отличаются от нулевых значений.
-func (ai ActorIDs) Clean() {
+func (ai ActorsIDs) Clean() {
 	for name, ids := range ai {
 		if len(ids) == 0 {
 			delete(ai, name)

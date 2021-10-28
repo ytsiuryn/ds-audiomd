@@ -17,26 +17,39 @@ const (
 
 // StrToWorkID ..
 var StrToWorkID = map[string]WorkID{
-	"MusicbrainzWorkID": MusicbrainzWorkID,
+	"musicbrainz_work_id": MusicbrainzWorkID,
 }
 
 func (wid WorkID) String() string {
 	switch wid {
 	case MusicbrainzWorkID:
-		return "MusicbrainzWorkID"
+		return "musicbrainz_work_id"
 	}
 	return ""
 }
 
-// MarshalJSON ..
-func (wid WorkID) MarshalJSON() ([]byte, error) {
-	return json.Marshal(wid.String())
+// WorkIDs представляет словарь идентификаторов композиции/произведения во внешних БД.
+type WorkIDs map[WorkID]string
+
+// MarshalJSON преобразует словарь идентификаторов композиции/произведения к JSON формату.
+func (wids WorkIDs) MarshalJSON() ([]byte, error) {
+	x := make(map[string]string, len(wids))
+	for k, v := range wids {
+		x[k.String()] = v
+	}
+	return json.Marshal(x)
 }
 
-// UnmarshalJSON получает тип медиа из значения JSON.
-func (wid *WorkID) UnmarshalJSON(b []byte) error {
-	k := string(b)
-	*wid = StrToWorkID[k[1:len(k)-1]]
+// UnmarshalJSON получает словарь идентификаторов композиции/произведения из значения JSON.
+func (wids *WorkIDs) UnmarshalJSON(b []byte) error {
+	x := make(map[string]string)
+	if err := json.Unmarshal(b, &x); err != nil {
+		return err
+	}
+	*wids = make(WorkIDs, len(x))
+	for k, v := range x {
+		(*wids)[StrToWorkID[k]] = v
+	}
 	return nil
 }
 
@@ -46,7 +59,7 @@ type Work struct {
 	Parent     *Work             `json:"-"`
 	Title      string            `json:"title,omitempty"`
 	Position   int               `json:"index,omitempty"`
-	Actors     ActorIDs          `json:"actors,omitempty"`
+	Actors     ActorsIDs         `json:"actors,omitempty"`
 	ActorRoles ActorRoles        `json:"actor_roles,omitempty"`
 	Notes      string            `json:"notes,omitempty"`
 	Lyrics     *Lyrics           `json:"lyrics,omitempty"`
@@ -56,7 +69,7 @@ type Work struct {
 // NewWork создает новый объект Composition.
 func NewWork() *Work {
 	return &Work{
-		Actors:     ActorIDs{},
+		Actors:     ActorsIDs{},
 		ActorRoles: ActorRoles{},
 		Lyrics:     NewLyrics(),
 		IDs:        map[string]string{},
